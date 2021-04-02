@@ -1,0 +1,14 @@
+{
+  "verbose": true,
+  "debug": false,
+  "exec": "ts-node ./app.ts",
+  "ignore": [
+    ".git",
+    "node_modules/**/node_modules",
+    "**/*.d.ts",
+    "*.test.ts",
+    "*.spec.ts"
+  ],
+  "watch": ["./app", "configs", "./app.ts"],
+  "ext": "ts,json"
+}
