@@ -1,0 +1,93 @@
+datasource db {
+  provider = "mysql"
+  url      = env("SERVICE_DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Podcast {
+  id          BigInt          @id @default(autoincrement())
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  title       String          @db.VarChar(255)
+  description String?
+  published   Boolean         @default(false)
+  authors     User[]
+  profile     PodcastProfile?
+  episodes    Episode[]
+}
+
+model PodcastProfile {
+  id                  BigInt  @id @default(autoincrement())
+  cover_art_image_url String
+  category_name       String
+  language            String
+  clean_content       Boolean
+  apple_podcasts_code String?
+  apple_podcasts_url  String? @unique
+  google_podcasts_url String? @unique
+  breaker_url         String? @unique
+  castbox_url         String? @unique
+  overcast_url        String? @unique
+  pocketcast_url      String? @unique
+  radiopublic_url     String? @unique
+  spotify             String? @unique
+  netease_url         String? @unique
+  qqmusic_url         String? @unique
+  ximalaya_url        String? @unique
+  xiaoyuzhou_url      String? @unique
+  website_url         String?
+  podcast             Podcast @relation(fields: [podcastId], references: [id])
+  podcastId           BigInt  @unique
+}
+
+model EpisodeProfile {
+  id                  BigInt   @id @default(autoincrement())
+  audio_url           String   @unique
+  audio_length        Int
+  cover_art_image_url String?
+  episode_type        String   @db.VarChar(7)
+  clean_content       Boolean?
+  season_number       Int?
+  episode_number      Int?
+  episode             Episode  @relation(fields: [episodeId], references: [id])
+  episodeId           BigInt   @unique
+}
+
+model Episode {
+  id        BigInt          @id @default(autoincrement())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  title     String          @db.VarChar(255)
+  content   String?
+  published Boolean         @default(false)
+  podcasts  Podcast[]
+  profile   EpisodeProfile?
+}
+
+model UserProfile {
+  id            BigInt  @id @default(autoincrement())
+  name          String
+  bio           String?
+  twitter_url   String?
+  instagram_url String?
+  youtube_url   String?
+  website_url   String?
+  wechat        String?
+  qq            String?
+  user          User    @relation(fields: [userId], references: [id])
+  userId        BigInt  @unique
+}
+
+model User {
+  id       BigInt       @id @default(autoincrement())
+  uuid     String       @db.Char(36)
+  email    String       @unique
+  password String       @db.Char(44)
+  salt     String       @db.Char(12)
+  type     String       @db.VarChar(5)
+  podcasts Podcast[]
+  profile  UserProfile?
+}
