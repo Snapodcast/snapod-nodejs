@@ -14,17 +14,17 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "typeRoots": [
-      "./node_modules/@types",
-      "./typings"
+      "node_modules/@types",
+      "typings"
     ],
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
       "configs": [
         "configs"
       ],
       "app": [
         "app"
-      ],
+      ]
     },
     "plugins": [
       {
@@ -37,13 +37,13 @@
     "app/**/*",
     "configs/**/*",
     "**/*.ts",
-    "**/*.tsx",
+    "**/*.tsx"
   ],
   "files": [
     "app.ts",
   ],
   "exclude": [
     "node_modules",
-    "dist",
+    "dist"
   ]
 }

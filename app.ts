@@ -1,15 +1,17 @@
 import Koa from "koa";
 import { Server } from "http";
-import Configs from "./configs/environments";
-import { print } from "./utilities/utils";
+import { createServer } from "./configs/koa.application";
+import { print } from "./utilities/print";
 
 module.exports = (async (): Promise<Server> => {
-  try {
-    const app: Koa = new Koa();
-    return app.listen(Configs.port, () => {
-      print.success(`Snapod server listening on port ${Configs.port} in ${Configs.mode} mode`);
-    });
-  } catch (e) {
-    console.log(e);
-  }
+	try {
+		const app: Koa = await createServer();
+		return app.listen(process.env.SERVICE_PORT, () => {
+			print.success(
+				`Snapod server listening on port ${process.env.SERVICE_PORT} in ${process.env.SERVICE_MODE} mode`
+			);
+		});
+	} catch (e) {
+		console.log(e);
+	}
 })();
