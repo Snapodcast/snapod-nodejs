@@ -13,9 +13,13 @@
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
     "@prisma/client": "^2.21.2",
+    "apollo-server-koa": "^2.23.0",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
+    "cuid": "^2.1.8",
     "dotenv": "^8.2.0",
+    "graphql": "^15.5.0",
+    "graphql-scalars": "^1.9.1",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",
@@ -25,8 +29,8 @@
     "pbkdf2": "^3.1.2",
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.9.0",
+    "type-graphql": "^1.1.1",
     "typedi": "^0.10.0",
-    "uuid": "^8.3.2",
     "validator": "^13.0.0"
   },
   "devDependencies": {
@@ -34,7 +38,7 @@
     "@types/koa": "^2.13.1",
     "@types/koa-bodyparser": "^4.3.0",
     "@types/koa-router": "^7.4.2",
-    "@types/node": "^14.14.41",
+    "@types/node": "^14.14.42",
     "@types/pbkdf2": "^3.1.0",
     "@types/uuid": "^8.3.0",
     "install": "^0.13.0",

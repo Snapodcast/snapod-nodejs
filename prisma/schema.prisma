@@ -83,7 +83,7 @@ model UserProfile {
 
 model User {
   id       BigInt       @id @default(autoincrement())
-  uuid     String       @db.Char(36)
+  cuid     String       @unique @default(cuid())
   email    String       @unique
   password String       @db.Char(44)
   salt     String       @db.Char(12)

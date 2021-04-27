@@ -9,15 +9,10 @@ import { Service } from "typedi";
 import { SignUpService } from "../services/signup.service";
 import { LoginService } from "../services/login.service";
 import validator from "validator";
-import { v4 as uuidv4 } from "uuid";
+import cuid from "cuid";
 import crypto from "crypto";
 import prisma from "../helpers/prisma.client";
-
-interface CredentialInterface {
-	name: string;
-	email: string;
-	password: string;
-}
+import { CredentialInterface } from "../services/signup.service";
 
 @JsonController()
 @Service()
@@ -61,7 +56,7 @@ export class SignupController {
 		}
 
 		// generate credentials
-		const uuid = uuidv4();
+		const user_cuid = cuid();
 		const random_salt = crypto.randomBytes(8).toString("base64");
 		const derived_pwd = crypto
 			.pbkdf2Sync(user.password, random_salt, 400000, 32, "sha256")
@@ -70,7 +65,7 @@ export class SignupController {
 		// create user
 		await this.signupService
 			.createUser({
-				uuid: uuid,
+				cuid: user_cuid,
 				email: user.email,
 				password: derived_pwd,
 				salt: random_salt,
@@ -88,7 +83,7 @@ export class SignupController {
 			status: true,
 			msg: "success",
 			token: this.loginService.sign({
-				uuid: uuid,
+				cuid: user_cuid,
 				email: user.email,
 				type: "user",
 			}),

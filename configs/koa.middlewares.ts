@@ -1,17 +1,19 @@
 import Koa, { Context } from "koa";
-import { UnauthorizedError, InternalServerError } from "routing-controllers";
 import bodyParser from "koa-bodyparser";
 import jwt from "koa-jwt";
 
 export const useMiddlewares = <T extends Koa>(app: T): T => {
 	app.use(bodyParser());
 
+	// handle unauthorized request
 	app.use(async (ctx: Context, next: (err?: any) => any) => {
 		return next().catch((err: any) => {
 			if (401 == err.status) {
-				throw new UnauthorizedError("Authorization error");
+				ctx.status = 401;
+				ctx.body = "Unauthorized";
 			} else {
-				throw new InternalServerError("Unknown error");
+				ctx.status = 500;
+				ctx.body = "Internal Server Error";
 			}
 		});
 	});

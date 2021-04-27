@@ -104,3 +104,7 @@ dist
 .tern-port
 
 releases/
+
+# Prisma
+prisma/migrations
+prisma/generated

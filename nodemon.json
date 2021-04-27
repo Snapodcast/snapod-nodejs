@@ -9,6 +9,6 @@
     "*.test.ts",
     "*.spec.ts"
   ],
-  "watch": ["./app", "configs", "./app.ts"],
+  "watch": ["./app", "configs", "./app.ts", "app", "graphql", "utilities"],
   "ext": "ts,json"
 }

@@ -11,11 +11,7 @@ import validator from "validator";
 import crypto from "crypto";
 import prisma from "../helpers/prisma.client";
 import { LoginService } from "../services/login.service";
-
-export interface CredentialInterface {
-	email: string;
-	password: string;
-}
+import { CredentialInterface } from "../services/login.service";
 
 @JsonController()
 @Service()
@@ -69,7 +65,7 @@ export class LoginController {
 				status: true,
 				msg: "success",
 				token: this.loginService.sign({
-					uuid: findResult.uuid,
+					cuid: findResult.cuid,
 					email: findResult.email,
 					type: findResult.type,
 				}),

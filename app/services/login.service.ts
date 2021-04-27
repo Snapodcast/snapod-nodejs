@@ -1,11 +1,14 @@
 import { Service } from "typedi";
 import prisma from "../helpers/prisma.client";
-import { Prisma } from "@prisma/client";
 import jwt from "jsonwebtoken";
-import { CredentialInterface } from "../controllers/login.controller";
 
-interface ProfileInterface {
-	uuid: string;
+export interface CredentialInterface {
+	email: string;
+	password: string;
+}
+
+export interface ProfileInterface {
+	cuid: string;
 	email: string;
 	type: string;
 }
@@ -19,7 +22,7 @@ export class LoginService {
 			},
 		});
 	}
-	sign(profile: ProfileInterface) {
+	sign(profile: ProfileInterface): string {
 		return jwt.sign(profile, process.env.SERVICE_JWT_SECRET, {
 			noTimestamp: true,
 			expiresIn: "7d",

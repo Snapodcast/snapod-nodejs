@@ -7,7 +7,7 @@ export class CorsMiddleware implements KoaMiddlewareInterface {
 	async use(context: any, next: (err?: any) => any): Promise<any> {
 		context.set(
 			"Access-Control-Allow-Methods",
-			"GET,HEAD,PUT,POST,DELETE,PATCH"
+			"GET,POST"
 		);
 		context.set(
 			"Access-Control-Allow-Origin",
