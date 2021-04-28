@@ -11,6 +11,16 @@ export interface CredentialInterface {
 @Service()
 export class SignUpService {
 	async createUser(credential: Prisma.UserCreateInput) {
+		// user already exist
+		if (
+			await prisma.user.findUnique({
+				where: {
+					email: credential.email,
+				},
+			})
+		) {
+			return Promise.reject();
+		}
 		return prisma.user.create({
 			data: credential,
 		});

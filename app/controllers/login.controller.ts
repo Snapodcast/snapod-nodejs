@@ -5,6 +5,7 @@ import {
 	Get,
 	JsonController,
 	QueryParam,
+	InternalServerError,
 } from "routing-controllers";
 import { Service } from "typedi";
 import validator from "validator";
@@ -30,7 +31,7 @@ export class LoginController {
 
 		// validate email
 		if (!user.email || !validator.isEmail(user.email)) {
-			throw new BadRequestError("Email is invalid");
+			throw new BadRequestError("Invalid email");
 		}
 
 		// validate password
@@ -48,11 +49,16 @@ export class LoginController {
 		const findResult = await this.loginService
 			.find(user)
 			.catch(() => {
-				throw new NotFoundError("User not found");
+				throw new InternalServerError("Internal server error");
 			})
 			.finally(async () => {
 				await prisma.$disconnect();
 			});
+
+		// not result is found
+		if (!findResult) {
+			throw new NotFoundError("Invalid email address");
+		}
 
 		// sign current password
 		const derived_pwd = crypto
@@ -63,7 +69,13 @@ export class LoginController {
 		if (findResult.password === derived_pwd) {
 			return JSON.stringify({
 				status: true,
-				msg: "success",
+				message: "success",
+				info: {
+					name: findResult.name,
+					cuid: findResult.cuid,
+					email: findResult.email,
+					type: findResult.type,
+				},
 				token: this.loginService.sign({
 					cuid: findResult.cuid,
 					email: findResult.email,
@@ -73,6 +85,6 @@ export class LoginController {
 		}
 
 		// authentication failed
-		throw new UnauthorizedError("Current credential is not correct");
+		throw new UnauthorizedError("Invalid password");
 	}
 }

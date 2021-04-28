@@ -1,6 +1,5 @@
 import {
 	BadRequestError,
-	InternalServerError,
 	Post,
 	JsonController,
 	Body,
@@ -65,6 +64,7 @@ export class SignupController {
 		// create user
 		await this.signupService
 			.createUser({
+				name: user.name,
 				cuid: user_cuid,
 				email: user.email,
 				password: derived_pwd,
@@ -72,7 +72,7 @@ export class SignupController {
 				type: "user",
 			})
 			.catch(() => {
-				throw new InternalServerError("Internal server error");
+				throw new BadRequestError("User already exists");
 			})
 			.finally(async () => {
 				await prisma.$disconnect();
@@ -81,7 +81,13 @@ export class SignupController {
 		// return message and sign JWT
 		return JSON.stringify({
 			status: true,
-			msg: "success",
+			message: "success",
+			info: {
+				cuid: user_cuid,
+				email: user.email,
+				type: "user",
+				name: user.name,
+			},
 			token: this.loginService.sign({
 				cuid: user_cuid,
 				email: user.email,

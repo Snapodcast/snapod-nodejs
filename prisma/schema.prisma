@@ -69,7 +69,6 @@ model Episode {
 
 model UserProfile {
   id            BigInt  @id @default(autoincrement())
-  name          String
   bio           String?
   twitter_url   String?
   instagram_url String?
@@ -87,7 +86,14 @@ model User {
   email    String       @unique
   password String       @db.Char(44)
   salt     String       @db.Char(12)
-  type     String       @db.VarChar(5)
+  type     String       @default("User") @db.VarChar(5)
+  name     String       @default("Snapod") @db.VarChar(30)
   podcasts Podcast[]
   profile  UserProfile?
+}
+
+model Recovery {
+  id    BigInt @id @default(autoincrement())
+  email String @unique
+  code  String @db.Char(44)
 }

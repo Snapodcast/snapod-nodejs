@@ -15,6 +15,11 @@ export class User {
 	@Field((_type) => String, {
 		nullable: false,
 	})
+	name!: string;
+
+	@Field((_type) => String, {
+		nullable: false,
+	})
 	cuid!: string;
 
 	@Field((_type) => String, {
