@@ -2,20 +2,23 @@ import {
 	Resolver,
 	Query,
 	Arg,
-	Args,
-	ArgsType,
-	InputType,
 	Mutation,
-	Field,
 	UnauthorizedError,
 	Ctx,
 } from "type-graphql";
-import { InternalServerError } from "routing-controllers";
+import { BadRequestError } from "routing-controllers";
 import { Podcast } from "../models/Podcast";
 import prisma from "../../helpers/prisma.client";
 import cuid from "cuid";
 import { Context } from "koa";
 import { ProfileInterface } from "../../services/login.service";
+import {
+	PodcastInput,
+	ModifyInfoInput,
+	ModifyProfileInput,
+} from "../types/podcasts.type";
+import { VoidOutput } from "../types/global.type";
+import { PodcastProfile } from "../models/PodcastProfile";
 
 interface JWTContext extends Context {
 	state: {
@@ -28,65 +31,6 @@ const authentication = (ctx: JWTContext, cuid: string) => {
 		throw new UnauthorizedError();
 	}
 };
-
-@InputType()
-class PodcastProfileInput {
-	@Field({
-		description: "Podcast language",
-		nullable: false,
-	})
-	public language: string;
-
-	@Field({
-		description: "Podcast category",
-		nullable: false,
-	})
-	public category: string;
-
-	@Field({
-		description: "Podcast content type",
-		nullable: false,
-	})
-	public contentClean: boolean;
-
-	@Field({
-		description: "Podcast cover art url",
-		nullable: false,
-	})
-	coverImageUrl: string;
-}
-
-@ArgsType()
-class PodcastInput {
-	@Field({
-		description: "Podcast author CUID",
-		nullable: false,
-	})
-	public authorCuid: string;
-
-	@Field({
-		description: "Podcast name",
-		nullable: false,
-	})
-	public name: string;
-
-	@Field({
-		description: "Podcast description",
-		nullable: false,
-	})
-	public description: string;
-
-	@Field(() => PodcastProfileInput, {
-		description: "Podcast profile",
-		nullable: false,
-	})
-	public profile: {
-		language: string;
-		category: string;
-		contentClean: boolean;
-		coverImageUrl: string;
-	};
-}
 
 @Resolver((_of) => Podcast)
 export class PodcastsResolver {
@@ -103,6 +47,9 @@ export class PodcastsResolver {
 			where: {
 				authorCuid: authorCuid,
 			},
+			include: {
+				profile: true,
+			},
 		});
 	}
 
@@ -111,13 +58,8 @@ export class PodcastsResolver {
 		description: "Create a new podcast",
 	})
 	async createPodcast(
-		@Args()
-		{
-			name,
-			authorCuid,
-			description,
-			profile: { language, category, contentClean, coverImageUrl },
-		}: PodcastInput,
+		@Arg("authorCuid") authorCuid: string,
+		@Arg("data") input: PodcastInput,
 		@Ctx() ctx: JWTContext
 	) {
 		authentication(ctx, authorCuid);
@@ -126,31 +68,105 @@ export class PodcastsResolver {
 		await prisma.podcast
 			.create({
 				data: {
-					name: name,
-					description: description,
+					name: input.name,
+					description: input.description,
 					authorCuid: authorCuid,
 					cuid: podcast_cuid,
 				},
 			})
 			.catch(() => {
-				throw new InternalServerError("An unexpected error has occurred");
+				throw new BadRequestError("An unexpected error has occurred");
 			});
 		// create podcast profile
 		await prisma.podcastProfile
 			.create({
 				data: {
-					language: language,
-					category_name: category,
-					clean_content: contentClean,
-					cover_art_image_url: coverImageUrl,
+					language: input.profile.language,
+					category_name: input.profile.category,
+					clean_content: input.profile.contentClean,
+					cover_art_image_url: input.profile.coverImageUrl,
 					podcastCuid: podcast_cuid,
 				},
 			})
 			.catch(() => {
-				throw new InternalServerError("An unexpected error has occurred");
+				throw new BadRequestError("An unexpected error has occurred");
 			});
 		return {
 			cuid: podcast_cuid,
+		};
+	}
+
+	@Mutation((_returns) => Podcast, {
+		nullable: false,
+		description: "Modify a podcast's info",
+	})
+	async modifyPodcastInfo(
+		@Arg("authorCuid") authorCuid: string,
+		@Arg("podcastCuid") podcastCuid: string,
+		@Arg("data") input: ModifyInfoInput,
+		@Ctx() ctx: JWTContext
+	) {
+		authentication(ctx, authorCuid);
+		// modify podcast
+		return await prisma.podcast
+			.update({
+				where: {
+					cuid: podcastCuid,
+				},
+				data: input,
+			})
+			.catch(() => {
+				throw new BadRequestError("An unexpected error has occurred");
+			});
+	}
+
+	@Mutation((_returns) => PodcastProfile, {
+		nullable: false,
+		description: "Modify a podcast's info",
+	})
+	async modifyPodcastProfile(
+		@Arg("authorCuid") authorCuid: string,
+		@Arg("podcastCuid") podcastCuid: string,
+		@Arg("data") input: ModifyProfileInput,
+		@Ctx() ctx: JWTContext
+	) {
+		authentication(ctx, authorCuid);
+		// modify podcast profile
+		return await prisma.podcastProfile
+			.update({
+				where: {
+					podcastCuid: podcastCuid,
+				},
+				data: input,
+			})
+			.catch(() => {
+				throw new BadRequestError("An unexpected error has occurred");
+			});
+	}
+
+	@Mutation((_returns) => VoidOutput, {
+		nullable: false,
+		description: "Delete a new podcast",
+	})
+	async deletePodcast(
+		@Arg("authorCuid") authorCuid: string,
+		@Arg("podcastCuid") podcastCuid: string,
+		@Ctx() ctx: JWTContext
+	) {
+		authentication(ctx, authorCuid);
+		// delete podcast and podcast profile
+		await prisma.podcast
+			.delete({
+				where: {
+					cuid: podcastCuid,
+				},
+			})
+			.catch(() => {
+				throw new BadRequestError("An unexpected error has occurred");
+			});
+		return {
+			status: true,
+			message: "success",
 		};
 	}
 }

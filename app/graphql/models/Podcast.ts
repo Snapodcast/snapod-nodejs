@@ -43,6 +43,9 @@ export class Podcast {
 	})
 	published!: boolean;
 
+	@Field((_type) => User, {
+		nullable: false,
+	})
 	author: User;
 
 	@Field((_type) => String, {
@@ -50,6 +53,9 @@ export class Podcast {
 	})
 	authorCuid!: string;
 
+	@Field((_type) => PodcastProfile, {
+		nullable: true,
+	})
 	profile?: PodcastProfile | null;
 
 	episodes?: Episode[];

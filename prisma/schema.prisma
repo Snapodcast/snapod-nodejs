@@ -40,8 +40,8 @@ model PodcastProfile {
   ximalaya_url        String? @unique
   xiaoyuzhou_url      String? @unique
   website_url         String?
-  podcast             Podcast @relation(fields: [podcastCuid], references: [cuid])
-  podcastCuid         String  @unique
+  podcast             Podcast? @relation(fields: [podcastCuid], references: [cuid])
+  podcastCuid         String?  @unique
 }
 
 model EpisodeProfile {
