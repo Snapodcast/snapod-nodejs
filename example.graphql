@@ -1,0 +1,76 @@
+# Get author's podcasts
+query {
+	podcasts(authorCuid: "cknzlx35l0000h69k7oc0fwm3") {
+		cuid
+		name
+		description
+		profile {
+			language
+			category_name
+			cover_art_image_url
+			clean_content
+		}
+	}
+}
+
+# Create new podcast
+mutation {
+	createPodcast(
+		authorCuid: "cknzlx35l0000h69k7oc0fwm3"
+		data: {
+			name: "测试播客 Test Podcast"
+			description: "这是一个简单的测试播客"
+			profile: {
+				language: "en-us"
+				category: "Personal Journal"
+				contentClean: true
+				coverImageUrl: "https://static.ouorz.com/wp-content/uploads/2020/12/2021010105320083.jpg"
+			}
+		}
+	) {
+		cuid
+	}
+}
+
+# Delete a podcast along with its profile
+mutation {
+	deletePodcast(
+		authorCuid: "cknzlx35l0000h69k7oc0fwm3"
+		podcastCuid: "cko2mkyjz0000ob9kelc02znk"
+	) {
+		status
+		message
+	}
+}
+
+# Modify a podcast's name and description
+mutation {
+	modifyPodcastInfo(
+		authorCuid: "cknzlx35l0000h69k7oc0fwm3"
+		podcastCuid: "cko2jj8r70000ke9k0ays3ceq"
+		data: { name: "已知未知 Known Unknowns" }
+	) {
+		name
+	}
+}
+
+# Modify a podcast's profile info
+mutation {
+	modifyPodcastProfile(
+		authorCuid: "cknzlx35l0000h69k7oc0fwm3"
+		podcastCuid: "cko2jj8r70000ke9k0ays3ceq"
+		data: { website_url: "https://kukfm.com" }
+	) {
+		website_url
+	}
+}
+
+# Modify a user's name and email
+mutation {
+	modifyUserInfo(
+		userCuid: "cknzlx35l0000h69k7oc0fwm3"
+		data: { name: "TonyHe" }
+	) {
+		name
+	}
+}
