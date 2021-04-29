@@ -58,7 +58,7 @@ export class PodcastsResolver {
 		description: "Get author's podcasts",
 	})
 	async podcasts(@Arg("authorCuid") authorCuid: string) {
-		return prisma.podcast.findMany({
+		return await prisma.podcast.findMany({
 			where: {
 				authorCuid: authorCuid,
 			},
@@ -73,7 +73,7 @@ export class PodcastsResolver {
 		description: "Get a podcast's profile",
 	})
 	async podcast(@Arg("podcastCuid") podcastCuid: string) {
-		return prisma.podcast.findUnique({
+		return await prisma.podcast.findUnique({
 			where: {
 				cuid: podcastCuid,
 			},

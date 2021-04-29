@@ -34,11 +34,17 @@ export class UsersResolver {
 		description: "Get an user",
 	})
 	async user(@Arg("userCuid") userCuid: string) {
-		return prisma.user.findUnique({
+		return await prisma.user.findUnique({
 			where: {
 				cuid: userCuid,
 			},
-		});
+			select: {
+				cuid: true,
+				email: true,
+				type: true,
+				name: true,
+			},
+		})
 	}
 
 	@Mutation((_returns) => User, {
