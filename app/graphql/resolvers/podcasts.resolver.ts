@@ -26,9 +26,28 @@ interface JWTContext extends Context {
 	};
 }
 
-const authentication = (ctx: JWTContext, cuid: string) => {
-	if (ctx.state.user.cuid !== cuid) {
-		throw new UnauthorizedError();
+const authentication = async (
+	ctx: JWTContext,
+	podcastOrUserCuid: string,
+	podcastOp: boolean
+) => {
+	if (podcastOp) {
+		const podcastResult = await prisma.podcast
+			.findUnique({
+				where: {
+					cuid: podcastOrUserCuid,
+				},
+			})
+			.catch(() => {
+				throw new BadRequestError("An unexpected error has occurred");
+			});
+		if (podcastResult.authorCuid !== ctx.state.user.cuid) {
+			throw new UnauthorizedError();
+		}
+	} else {
+		if (podcastOrUserCuid !== ctx.state.user.cuid) {
+			throw new UnauthorizedError();
+		}
 	}
 };
 
@@ -42,7 +61,7 @@ export class PodcastsResolver {
 		@Arg("authorCuid") authorCuid: string,
 		@Ctx() ctx: JWTContext
 	) {
-		authentication(ctx, authorCuid);
+		authentication(ctx, authorCuid, false);
 		return prisma.podcast.findMany({
 			where: {
 				authorCuid: authorCuid,
@@ -62,7 +81,7 @@ export class PodcastsResolver {
 		@Arg("data") input: PodcastInput,
 		@Ctx() ctx: JWTContext
 	) {
-		authentication(ctx, authorCuid);
+		authentication(ctx, authorCuid, false);
 		const podcast_cuid = cuid();
 		// create podcast
 		await prisma.podcast
@@ -72,25 +91,20 @@ export class PodcastsResolver {
 					description: input.description,
 					authorCuid: authorCuid,
 					cuid: podcast_cuid,
+					profile: {
+						create: {
+							language: input.profile.language,
+							category_name: input.profile.category,
+							clean_content: input.profile.contentClean,
+							cover_art_image_url: input.profile.coverImageUrl,
+						},
+					},
 				},
 			})
 			.catch(() => {
 				throw new BadRequestError("An unexpected error has occurred");
 			});
-		// create podcast profile
-		await prisma.podcastProfile
-			.create({
-				data: {
-					language: input.profile.language,
-					category_name: input.profile.category,
-					clean_content: input.profile.contentClean,
-					cover_art_image_url: input.profile.coverImageUrl,
-					podcastCuid: podcast_cuid,
-				},
-			})
-			.catch(() => {
-				throw new BadRequestError("An unexpected error has occurred");
-			});
+
 		return {
 			cuid: podcast_cuid,
 		};
@@ -101,12 +115,11 @@ export class PodcastsResolver {
 		description: "Modify a podcast's info",
 	})
 	async modifyPodcastInfo(
-		@Arg("authorCuid") authorCuid: string,
 		@Arg("podcastCuid") podcastCuid: string,
 		@Arg("data") input: ModifyInfoInput,
 		@Ctx() ctx: JWTContext
 	) {
-		authentication(ctx, authorCuid);
+		authentication(ctx, podcastCuid, true);
 		// modify podcast
 		return await prisma.podcast
 			.update({
@@ -122,15 +135,14 @@ export class PodcastsResolver {
 
 	@Mutation((_returns) => PodcastProfile, {
 		nullable: false,
-		description: "Modify a podcast's info",
+		description: "Modify a podcast's profile",
 	})
 	async modifyPodcastProfile(
-		@Arg("authorCuid") authorCuid: string,
 		@Arg("podcastCuid") podcastCuid: string,
 		@Arg("data") input: ModifyProfileInput,
 		@Ctx() ctx: JWTContext
 	) {
-		authentication(ctx, authorCuid);
+		authentication(ctx, podcastCuid, true);
 		// modify podcast profile
 		return await prisma.podcastProfile
 			.update({
@@ -146,24 +158,33 @@ export class PodcastsResolver {
 
 	@Mutation((_returns) => VoidOutput, {
 		nullable: false,
-		description: "Delete a new podcast",
+		description: "Delete a podcast",
 	})
 	async deletePodcast(
-		@Arg("authorCuid") authorCuid: string,
 		@Arg("podcastCuid") podcastCuid: string,
 		@Ctx() ctx: JWTContext
 	) {
-		authentication(ctx, authorCuid);
+		authentication(ctx, podcastCuid, true);
+		// delete podcast's episodes
+		const deleteEpisodes = prisma.episode.deleteMany({
+			where: {
+				podcastCuid: podcastCuid,
+			},
+		});
+
 		// delete podcast and podcast profile
-		await prisma.podcast
-			.delete({
-				where: {
-					cuid: podcastCuid,
-				},
-			})
+		const deleteCurrentPodcast = prisma.podcast.delete({
+			where: {
+				cuid: podcastCuid,
+			},
+		});
+
+		await prisma
+			.$transaction([deleteEpisodes, deleteCurrentPodcast])
 			.catch(() => {
 				throw new BadRequestError("An unexpected error has occurred");
 			});
+
 		return {
 			status: true,
 			message: "success",

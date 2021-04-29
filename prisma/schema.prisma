@@ -21,24 +21,24 @@ model Podcast {
 }
 
 model PodcastProfile {
-  id                  BigInt  @id @default(autoincrement())
+  id                  BigInt   @id @default(autoincrement())
   cover_art_image_url String
   category_name       String
   language            String
   clean_content       Boolean
   apple_podcasts_code String?
-  apple_podcasts_url  String? @unique
-  google_podcasts_url String? @unique
-  breaker_url         String? @unique
-  castbox_url         String? @unique
-  overcast_url        String? @unique
-  pocketcast_url      String? @unique
-  radiopublic_url     String? @unique
-  spotify             String? @unique
-  netease_url         String? @unique
-  qqmusic_url         String? @unique
-  ximalaya_url        String? @unique
-  xiaoyuzhou_url      String? @unique
+  apple_podcasts_url  String?  @unique
+  google_podcasts_url String?  @unique
+  breaker_url         String?  @unique
+  castbox_url         String?  @unique
+  overcast_url        String?  @unique
+  pocketcast_url      String?  @unique
+  radiopublic_url     String?  @unique
+  spotify             String?  @unique
+  netease_url         String?  @unique
+  qqmusic_url         String?  @unique
+  ximalaya_url        String?  @unique
+  xiaoyuzhou_url      String?  @unique
   website_url         String?
   podcast             Podcast? @relation(fields: [podcastCuid], references: [cuid])
   podcastCuid         String?  @unique
@@ -46,24 +46,24 @@ model PodcastProfile {
 
 model EpisodeProfile {
   id                  BigInt   @id @default(autoincrement())
-  audio_url           String   @unique
+  audio_url           String
   audio_length        Int
+  audio_size          Int
   cover_art_image_url String?
   episode_type        String   @db.VarChar(7)
-  clean_content       Boolean?
+  clean_content       Boolean
   season_number       Int?
   episode_number      Int?
-  episode             Episode  @relation(fields: [episodeCuid], references: [cuid])
-  episodeCuid         String   @unique
+  episode             Episode? @relation(fields: [episodeCuid], references: [cuid])
+  episodeCuid         String?  @unique
 }
 
 model Episode {
   id          BigInt          @id @default(autoincrement())
   cuid        String          @unique @default(cuid())
   createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
   title       String          @db.VarChar(255)
-  content     String?
+  content     String?         @db.LongText
   published   Boolean         @default(false)
   profile     EpisodeProfile?
   podcast     Podcast         @relation(fields: [podcastCuid], references: [cuid])

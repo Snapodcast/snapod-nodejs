@@ -106,5 +106,4 @@ dist
 releases/
 
 # Prisma
-prisma/migrations
 prisma/generated

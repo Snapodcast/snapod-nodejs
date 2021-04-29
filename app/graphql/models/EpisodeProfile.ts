@@ -48,8 +48,8 @@ export class EpisodeProfile {
 
 	episode?: Episode;
 
-	@TypeGraphQL.Field((_type) => GraphQLScalars.BigIntResolver, {
+	@TypeGraphQL.Field((_type) => String, {
 		nullable: false,
 	})
-	episodeId!: bigint;
+	episodeCuid!: string;
 }

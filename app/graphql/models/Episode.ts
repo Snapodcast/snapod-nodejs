@@ -12,15 +12,15 @@ export class Episode {
 	})
 	id!: bigint;
 
-	@Field((_type) => Date, {
+	@Field((_type) => String, {
 		nullable: false,
 	})
-	createdAt!: Date;
+	cuid!: string;
 
 	@Field((_type) => Date, {
 		nullable: false,
 	})
-	updatedAt!: Date;
+	createdAt!: Date;
 
 	@Field((_type) => String, {
 		nullable: false,
@@ -38,6 +38,11 @@ export class Episode {
 	published!: boolean;
 
 	podcast?: Podcast;
+
+	@Field((_type) => String, {
+		nullable: false,
+	})
+	podcastCuid!: string;
 
 	profile?: EpisodeProfile | null;
 }

@@ -35,7 +35,6 @@ mutation {
 # Delete a podcast along with its profile
 mutation {
 	deletePodcast(
-		authorCuid: "cknzlx35l0000h69k7oc0fwm3"
 		podcastCuid: "cko2mkyjz0000ob9kelc02znk"
 	) {
 		status
@@ -46,7 +45,6 @@ mutation {
 # Modify a podcast's name and description
 mutation {
 	modifyPodcastInfo(
-		authorCuid: "cknzlx35l0000h69k7oc0fwm3"
 		podcastCuid: "cko2jj8r70000ke9k0ays3ceq"
 		data: { name: "已知未知 Known Unknowns" }
 	) {
@@ -54,10 +52,9 @@ mutation {
 	}
 }
 
-# Modify a podcast's profile info
+# Modify a podcast's profile
 mutation {
 	modifyPodcastProfile(
-		authorCuid: "cknzlx35l0000h69k7oc0fwm3"
 		podcastCuid: "cko2jj8r70000ke9k0ays3ceq"
 		data: { website_url: "https://kukfm.com" }
 	) {
@@ -72,5 +69,53 @@ mutation {
 		data: { name: "TonyHe" }
 	) {
 		name
+	}
+}
+
+# Create an episode
+mutation {
+	createEpisode(
+		podcastCuid: "cko2jj8r70000ke9k0ays3ceq"
+		data: {
+			title: "EP01: 解构的 2020 之留学杂谈"
+			content: "<p>已知未知是一档聚焦生活、科技与职业的非定期更新播客。信息过载的时代，我们从已知探索未知。</p>\n<p>&nbsp;</p>\n<h3>第一期</h3>\n<p>2020 是特殊的一年，每个国家和社会都经历着多种多样的变革，各行各业也面临着全新的挑战。在这样的不同寻常的时期，不论是准备出国或是计划留学的朋友或多或少地都有着一些疑虑和困惑；本期的节目请到两位九月赴英留学、刚刚结束大学第一学期的留学生来分享他们的经历和想法，希望对即将出国或是 2021 计划留学的同学有所启发。</p>\n<p>主持：Tony</p>\n<p>嘉宾：Leon, Levi</p>\n<p>&nbsp;</p>\n<p>00:23 - 背景介绍</p>\n<p>00:57 - 嘉宾们的自我介绍</p>\n<p>02:20 - 选择专业/学校的方式方法与缘由</p>\n<p>07:38 - 大学申请心得与踩过的坑</p>\n<p>16:05 - 出国预备/签证/机票等琐碎经验</p>\n<p>20:31 - 航班旅途与当地疫情状况</p>\n<p>22:42 - 离乡留学的不舍/伤感与心态调整</p>\n<p>24:25 - 网课与线下授课的区别与偏好</p>\n<p>27:39 - 生活起居/宿舍状况/本地服务使用经验</p>\n<p>33:30 - 文化差异与其造成的社交困境</p>\n<p>38:10 - 国内外学习的差异/大学生活新体验</p>\n<p>&nbsp;</p>\n<h3>订阅</h3>\n<p><strong>RSS</strong>: <a href=\"https://anchor.fm/s/4612e698/podcast/rss\">https://anchor.fm/s/4612e698/podcast/rss</a></p>\n<p><strong>Anchor.FM</strong>: <a href=\"https://anchor.fm/the-known-unknowns\">https://anchor.fm/the-known-unknowns</a></p>\n<p>网易云音乐:<a href=\"https://music.163.com/#/djradio?id=796784079\"> https://music.163.com/#/djradio?id=796784079</a></p>\n<p>喜马拉雅: <a href=\"https://www.ximalaya.com/gerenchengzhang/45246859\">https://www.ximalaya.com/gerenchengzhang/45246859</a></p>\n<p>Spotify: <a href=\"https://open.spotify.com/show/1wyg21KT66xDoG5dB2ouGa\">https://open.spotify.com/show/1wyg21KT66xDoG5dB2ouGa</a></p>\n<p>Breaker: <a href=\"https://www.breaker.audio/yi-zhi-wei-zhi-known-unknowns\">https://www.breaker.audio/yi-zhi-wei-zhi-known-unknowns</a></p>\n<p>Castbox: <a href=\"https://castbox.fm/channel/id3666710\">https://castbox.fm/channel/id3666710</a></p>\n<p>RadioPublic: <a href=\"https://radiopublic.com/known-unknowns-6L3VRo\">https://radiopublic.com/known-unknowns-6L3VRo</a></p>\n<p>&nbsp;</p>\n<p>Apple Podcast 与 Google Podcasts 正在等待收录</p>\n<p>&nbsp;</p>\n<p>感谢收听，欢迎订阅</p>\n"
+			profile: {
+				audio_url: "https://static.ouorz.com/KUK_Podcast_EP01_Final.mp3"
+				audio_length: 2589
+				audio_size: 103568563
+				episode_type: "Full"
+				clean_content: true
+			}
+		}
+	) {
+		cuid
+	}
+}
+
+# Modify an episode's title and content
+mutation {
+	modifyEpisodeInfo(
+		episodeCuid: "cko318ae500006w9k2lvbcihr"
+		data: { title: "EP01: 解构的 2020 之留学杂谈" }
+	) {
+		title
+	}
+}
+
+# Modify an episode's profile
+mutation {
+	modifyEpisodeProfile(
+		episodeCuid: "cko318ae500006w9k2lvbcihr"
+		data: { episode_number: 1 }
+	) {
+		episode_number
+	}
+}
+
+# Delete an episode
+mutation {
+	deleteEpisode(episodeCuid: "cko318ae500006w9k2lvbcihr") {
+		status
+		message
 	}
 }
