@@ -1,7 +1,7 @@
 import {
 	Resolver,
 	Arg,
-	Args,
+	Query,
 	Mutation,
 	UnauthorizedError,
 	Ctx,
@@ -29,6 +29,18 @@ const authentication = (ctx: JWTContext, cuid: string) => {
 
 @Resolver((_of) => User)
 export class UsersResolver {
+	@Query((_returns) => User, {
+		nullable: true,
+		description: "Get an user",
+	})
+	async user(@Arg("userCuid") userCuid: string) {
+		return prisma.user.findUnique({
+			where: {
+				cuid: userCuid,
+			},
+		});
+	}
+
 	@Mutation((_returns) => User, {
 		nullable: false,
 		description: "Modify a user's name or email",

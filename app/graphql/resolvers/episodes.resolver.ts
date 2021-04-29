@@ -70,6 +70,18 @@ export class EpisodesResolver {
 			where: {
 				podcastCuid,
 			},
+		});
+	}
+
+	@Query((_returns) => Episode, {
+		nullable: true,
+		description: "Get an episode's profile",
+	})
+	async episode(@Arg("episodeCuid") episodeCuid: string) {
+		return prisma.episode.findUnique({
+			where: {
+				cuid: episodeCuid,
+			},
 			include: {
 				profile: true,
 			},

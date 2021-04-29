@@ -57,14 +57,25 @@ export class PodcastsResolver {
 		nullable: true,
 		description: "Get author's podcasts",
 	})
-	async podcasts(
-		@Arg("authorCuid") authorCuid: string,
-		@Ctx() ctx: JWTContext
-	) {
-		authentication(ctx, authorCuid, false);
+	async podcasts(@Arg("authorCuid") authorCuid: string) {
 		return prisma.podcast.findMany({
 			where: {
 				authorCuid: authorCuid,
+			},
+			include: {
+				profile: true,
+			},
+		});
+	}
+
+	@Query((_returns) => Podcast, {
+		nullable: true,
+		description: "Get a podcast's profile",
+	})
+	async podcast(@Arg("podcastCuid") podcastCuid: string) {
+		return prisma.podcast.findUnique({
+			where: {
+				cuid: podcastCuid,
 			},
 			include: {
 				profile: true,

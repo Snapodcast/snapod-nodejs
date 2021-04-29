@@ -4,6 +4,15 @@ query {
 		cuid
 		name
 		description
+	}
+}
+
+# Get a podcast's info
+query {
+	podcast(podcastCuid: "cko2mkyjz0000ob9kelc02znk") {
+		cuid
+		name
+		description
 		profile {
 			language
 			category_name
@@ -34,9 +43,7 @@ mutation {
 
 # Delete a podcast along with its profile
 mutation {
-	deletePodcast(
-		podcastCuid: "cko2mkyjz0000ob9kelc02znk"
-	) {
+	deletePodcast(podcastCuid: "cko2mkyjz0000ob9kelc02znk") {
 		status
 		message
 	}
@@ -62,6 +69,15 @@ mutation {
 	}
 }
 
+# Get an user's info
+query {
+	user(userCuid: "cko2mkyjz0000ob9kelc02znk") {
+		cuid
+		name
+		email
+	}
+}
+
 # Modify a user's name and email
 mutation {
 	modifyUserInfo(
@@ -69,6 +85,27 @@ mutation {
 		data: { name: "TonyHe" }
 	) {
 		name
+	}
+}
+
+# Get a podcast's episodes
+query {
+	episodes(podcastCuid: "cko2mkyjz0000ob9kelc02znk") {
+		cuid
+		title
+		content
+	}
+}
+
+# Get an episode's info
+query {
+	episode(episodeCuid: "cko2mkyjz0000ob9kelc02znk") {
+		cuid
+		title
+		content
+		profile {
+			audio_url
+		}
 	}
 }
 
