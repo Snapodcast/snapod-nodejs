@@ -22,7 +22,7 @@ const sendEmail = (email: string, subject: string, html: string) => {
 		if (error) {
 			return console.log(error);
 		}
-		console.log("Message sent: " + info.response);
+		console.log("Email sent: " + info.response);
 	});
 };
 

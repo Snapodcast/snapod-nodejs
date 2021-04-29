@@ -1,13 +1,12 @@
 import { ObjectType, Field } from "type-graphql";
 import * as GraphQLScalars from "graphql-scalars";
-import { Episode } from "./Episode";
-import { PodcastProfile } from "./PodcastProfile";
-import { User } from "./User";
+import { EpisodeProfile } from "./EpisodeProfile";
+import { Podcast } from "./Podcast";
 
 @ObjectType({
 	isAbstract: true,
 })
-export class Podcast {
+export class Episode {
 	@Field((_type) => GraphQLScalars.BigIntResolver, {
 		nullable: false,
 	})
@@ -31,16 +30,14 @@ export class Podcast {
 	@Field((_type) => String, {
 		nullable: true,
 	})
-	description?: string | null;
+	content?: string | null;
 
 	@Field((_type) => Boolean, {
 		nullable: false,
 	})
 	published!: boolean;
 
-	authors?: User[];
+	podcast?: Podcast;
 
-	profile?: PodcastProfile | null;
-
-	episodes?: Episode[];
+	profile?: EpisodeProfile | null;
 }

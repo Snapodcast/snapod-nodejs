@@ -43,6 +43,4 @@ export class User {
 	type!: string;
 
 	podcasts?: Podcast[];
-
-	profile?: UserProfile | null;
 }

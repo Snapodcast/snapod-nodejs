@@ -27,6 +27,8 @@ export const useMiddlewares = <T extends Koa>(app: T): T => {
 				`/v${process.env.SERVICE_VERSION}/api/login`,
 				`/v${process.env.SERVICE_VERSION}/api/ping`,
 				`/v${process.env.SERVICE_VERSION}/api/signup`,
+				`/v${process.env.SERVICE_VERSION}/api/forgot/recover`,
+				`/v${process.env.SERVICE_VERSION}/api/forgot/request`,
 			],
 			method: "OPTIONS",
 		})

@@ -9,14 +9,15 @@ generator client {
 
 model Podcast {
   id          BigInt          @id @default(autoincrement())
+  cuid        String          @unique @default(cuid())
   createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  title       String          @db.VarChar(255)
+  name        String          @db.VarChar(255)
   description String?
   published   Boolean         @default(false)
-  authors     User[]
   profile     PodcastProfile?
   episodes    Episode[]
+  author      User            @relation(fields: [authorCuid], references: [cuid])
+  authorCuid  String
 }
 
 model PodcastProfile {
@@ -39,8 +40,8 @@ model PodcastProfile {
   ximalaya_url        String? @unique
   xiaoyuzhou_url      String? @unique
   website_url         String?
-  podcast             Podcast @relation(fields: [podcastId], references: [id])
-  podcastId           BigInt  @unique
+  podcast             Podcast @relation(fields: [podcastCuid], references: [cuid])
+  podcastCuid         String  @unique
 }
 
 model EpisodeProfile {
@@ -52,48 +53,36 @@ model EpisodeProfile {
   clean_content       Boolean?
   season_number       Int?
   episode_number      Int?
-  episode             Episode  @relation(fields: [episodeId], references: [id])
-  episodeId           BigInt   @unique
+  episode             Episode  @relation(fields: [episodeCuid], references: [cuid])
+  episodeCuid         String   @unique
 }
 
 model Episode {
-  id        BigInt          @id @default(autoincrement())
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-  title     String          @db.VarChar(255)
-  content   String?
-  published Boolean         @default(false)
-  podcasts  Podcast[]
-  profile   EpisodeProfile?
-}
-
-model UserProfile {
-  id            BigInt  @id @default(autoincrement())
-  bio           String?
-  twitter_url   String?
-  instagram_url String?
-  youtube_url   String?
-  website_url   String?
-  wechat        String?
-  qq            String?
-  user          User    @relation(fields: [userId], references: [id])
-  userId        BigInt  @unique
+  id          BigInt          @id @default(autoincrement())
+  cuid        String          @unique @default(cuid())
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  title       String          @db.VarChar(255)
+  content     String?
+  published   Boolean         @default(false)
+  profile     EpisodeProfile?
+  podcast     Podcast         @relation(fields: [podcastCuid], references: [cuid])
+  podcastCuid String
 }
 
 model User {
-  id       BigInt       @id @default(autoincrement())
-  cuid     String       @unique @default(cuid())
-  email    String       @unique
-  password String       @db.Char(44)
-  salt     String       @db.Char(12)
-  type     String       @default("User") @db.VarChar(5)
-  name     String       @default("Snapod") @db.VarChar(30)
+  id       BigInt    @id @default(autoincrement())
+  cuid     String    @unique @default(cuid())
+  email    String    @unique
+  password String    @db.Char(44)
+  salt     String    @db.Char(12)
+  type     String    @default("User") @db.VarChar(5)
+  name     String    @db.VarChar(30)
   podcasts Podcast[]
-  profile  UserProfile?
 }
 
 model Recovery {
   id    BigInt @id @default(autoincrement())
-  email String @unique
-  code  String @db.Char(44)
+  email String
+  code  String @unique @db.Char(44)
 }

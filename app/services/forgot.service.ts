@@ -16,17 +16,16 @@ export class ForgotService {
 			},
 		});
 	}
-	async findRequest(email: string, code: string) {
-		return prisma.recovery.findFirst({
+	async findRequest(code: string) {
+		return prisma.recovery.findUnique({
 			where: {
-				email: email,
-				code: code,
+				code,
 			},
 		});
 	}
 	async updateUser(email: string, password: string, salt: string) {
-		// delete recovery request
-		await prisma.recovery.delete({
+		// delete recovery request record
+		await prisma.recovery.deleteMany({
 			where: {
 				email,
 			},
@@ -49,8 +48,8 @@ export class ForgotService {
 		if (createResult) {
 			sendEmail(
 				profile.email,
-				"您在 Snapod 的密码找回确认链接 | Password Recovery Link",
-				`<h2><span role="img" aria-label="snapod-logo">🎙️</span>Snapod</h2><br/><p>您正在申请找回 Snapod 账户密码，请点击以下链接以开启重置流程:</p><p><a>https://snapodcast.com/forgot/recover/email/${profile.email}/code/${profile.code}</a></p>`
+				"您在 Snapod 的密码找回秘钥 | Password Recovery Code",
+				`<h2><span role="img" aria-label="snapod-logo">🎙️</span>Snapod</h2><br/><p>您正在申请找回 Snapod 账户密码，请输入以下秘钥以完成密码重设:</p><p><b>${profile.code}</b></p><p>如果这不是您的操作，请忽略，您的账户仍然安全</p>`
 			);
 			return Promise.resolve(createResult);
 		}

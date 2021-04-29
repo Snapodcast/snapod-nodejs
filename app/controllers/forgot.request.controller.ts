@@ -34,7 +34,7 @@ export class ForgotRequestController {
 				await prisma.$disconnect();
 			});
 
-		// not result is found
+		// no result is found
 		if (!findResult) {
 			throw new NotFoundError("Invalid email address");
 		}
@@ -42,7 +42,7 @@ export class ForgotRequestController {
 		// generate recovery code
 		const random_salt = crypto.randomBytes(8).toString("base64");
 		const derived_code = crypto
-			.pbkdf2Sync(body.email, random_salt, 400000, 32, "sha256")
+			.pbkdf2Sync(random_salt, random_salt, 400000, 32, "sha256")
 			.toString("base64");
 
 		// create request record

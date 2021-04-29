@@ -103,8 +103,8 @@ export class PodcastProfile {
 
 	podcast?: Podcast;
 
-	@Field((_type) => GraphQLScalars.BigIntResolver, {
+	@Field((_type) => String, {
 		nullable: false,
 	})
-	podcastId!: bigint;
+	podcastCuid!: string;
 }

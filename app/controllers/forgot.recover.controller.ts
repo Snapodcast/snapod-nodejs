@@ -25,11 +25,6 @@ export class ForgotRecoverController {
 
 	@Post("/forgot/recover")
 	async login(@Body() body: RecoverInterface) {
-		// validate email
-		if (!body.email || !validator.isEmail(body.email)) {
-			throw new BadRequestError("Invalid email");
-		}
-
 		// validate code
 		if (!body.code || body.code.length !== 44) {
 			throw new BadRequestError("Invalid code");
@@ -48,7 +43,7 @@ export class ForgotRecoverController {
 
 		// get unique request
 		const findRequestResult = await this.forgotService
-			.findRequest(body.email, body.code)
+			.findRequest(body.code)
 			.catch(() => {
 				throw new InternalServerError("Internal server error");
 			})
@@ -69,7 +64,7 @@ export class ForgotRecoverController {
 
 		// update password
 		await this.forgotService
-			.updateUser(body.email, derived_pwd, random_salt)
+			.updateUser(findRequestResult.email, derived_pwd, random_salt)
 			.catch(() => {
 				throw new BadRequestError("User already exists");
 			})
