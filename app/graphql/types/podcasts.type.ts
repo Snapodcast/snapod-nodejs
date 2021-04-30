@@ -25,6 +25,24 @@ class PodcastProfileInput {
 		nullable: false,
 	})
 	coverImageUrl: string;
+
+	@Field({
+		description: "Podcast copyright",
+		nullable: true,
+	})
+	public copyright: string;
+
+	@Field({
+		description: "Podcast owner name",
+		nullable: true,
+	})
+	public ownerName: string;
+
+	@Field({
+		description: "Podcast owner email",
+		nullable: true,
+	})
+	public ownerEmail: string;
 }
 
 @InputType()
@@ -41,6 +59,12 @@ export class PodcastInput {
 	})
 	public description: string;
 
+	@Field({
+		description: "Podcast type",
+		nullable: false,
+	})
+	public type: string;
+
 	@Field(() => PodcastProfileInput, {
 		description: "Podcast profile",
 		nullable: false,
@@ -50,6 +74,9 @@ export class PodcastInput {
 		category: string;
 		contentClean: boolean;
 		coverImageUrl: string;
+		copyright?: string;
+		ownerName?: string;
+		ownerEmail?: string;
 	};
 }
 
@@ -66,6 +93,12 @@ export class ModifyInfoInput {
 		nullable: true,
 	})
 	public description?: string;
+
+	@Field({
+		description: "Podcast type",
+		nullable: true,
+	})
+	public type: string;
 }
 
 @InputType()
@@ -177,4 +210,34 @@ export class ModifyProfileInput {
 		nullable: true,
 	})
 	website_url?: string | null;
+
+	@Field((_type) => String, {
+		description: "Podcast copyright",
+		nullable: true,
+	})
+	public copyright?: string;
+
+	@Field((_type) => String, {
+		description: "Podcast owner name",
+		nullable: true,
+	})
+	public ownerName?: string;
+
+	@Field((_type) => String, {
+		description: "Podcast owner email",
+		nullable: true,
+	})
+	public ownerEmail?: string;
+
+	@Field((_type) => String, {
+		description: "Podcast copyright",
+		nullable: true,
+	})
+	public block?: boolean;
+
+	@Field((_type) => String, {
+		description: "Podcast copyright",
+		nullable: true,
+	})
+	public complete?: boolean;
 }

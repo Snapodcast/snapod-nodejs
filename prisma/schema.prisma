@@ -12,8 +12,8 @@ model Podcast {
   cuid        String          @unique @default(cuid())
   createdAt   DateTime        @default(now())
   name        String          @db.VarChar(255)
-  description String?
-  published   Boolean         @default(false)
+  description String          @db.Text
+  type        String          @db.VarChar(8)
   profile     PodcastProfile?
   episodes    Episode[]
   author      User            @relation(fields: [authorCuid], references: [cuid])
@@ -40,6 +40,12 @@ model PodcastProfile {
   ximalaya_url        String?  @unique
   xiaoyuzhou_url      String?  @unique
   website_url         String?
+  copyright           String?
+  ownerName           String?
+  ownerEmail          String?
+  block               Boolean?
+  complete            Boolean?
+  new_feed_url        String?
   podcast             Podcast? @relation(fields: [podcastCuid], references: [cuid])
   podcastCuid         String?  @unique
 }

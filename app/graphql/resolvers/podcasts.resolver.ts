@@ -94,6 +94,29 @@ export class PodcastsResolver {
 	) {
 		authentication(ctx, authorCuid, false);
 		const podcast_cuid = cuid();
+		let podcast_profile = {
+			language: input.profile.language,
+			category_name: input.profile.category,
+			clean_content: input.profile.contentClean,
+			cover_art_image_url: input.profile.coverImageUrl,
+		};
+		if (input.profile.copyright) {
+			podcast_profile = {
+				...podcast_profile,
+				...{
+					copyright: input.profile.copyright,
+				},
+			};
+		}
+		if (input.profile.ownerName && input.profile.ownerEmail) {
+			podcast_profile = {
+				...podcast_profile,
+				...{
+					ownerName: input.profile.ownerName,
+					ownerEmail: input.profile.ownerEmail,
+				},
+			};
+		}
 		// create podcast
 		await prisma.podcast
 			.create({
@@ -102,13 +125,9 @@ export class PodcastsResolver {
 					description: input.description,
 					authorCuid: authorCuid,
 					cuid: podcast_cuid,
+					type: input.type,
 					profile: {
-						create: {
-							language: input.profile.language,
-							category_name: input.profile.category,
-							clean_content: input.profile.contentClean,
-							cover_art_image_url: input.profile.coverImageUrl,
-						},
+						create: podcast_profile,
 					},
 				},
 			})
