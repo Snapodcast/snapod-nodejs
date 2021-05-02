@@ -101,6 +101,36 @@ export class PodcastProfile {
 	})
 	website_url?: string | null;
 
+	@Field((_type) => String, {
+		nullable: true,
+	})
+	copyright?: string | null;
+
+	@Field((_type) => String, {
+		nullable: true,
+	})
+	ownerName?: string | null;
+
+	@Field((_type) => String, {
+		nullable: true,
+	})
+	ownerEmail?: string | null;
+
+	@Field((_type) => Boolean, {
+		nullable: true,
+	})
+	block?: boolean | null;
+
+	@Field((_type) => Boolean, {
+		nullable: true,
+	})
+	complete?: boolean | null;
+
+	@Field((_type) => String, {
+		nullable: true,
+	})
+	new_feed_url?: string | null;
+
 	podcast?: Podcast;
 
 	@Field((_type) => String, {

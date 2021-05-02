@@ -53,6 +53,11 @@ export class Podcast {
 	})
 	authorCuid!: string;
 
+	@Field((_type) => String, {
+		nullable: false,
+	})
+	type!: string;
+
 	@Field((_type) => PodcastProfile, {
 		nullable: true,
 	})

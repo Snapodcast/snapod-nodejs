@@ -70,6 +70,9 @@ export class EpisodesResolver {
 			where: {
 				podcastCuid,
 			},
+			include: {
+				profile: true,
+			},
 		});
 	}
 

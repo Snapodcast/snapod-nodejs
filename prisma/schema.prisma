@@ -24,7 +24,7 @@ model PodcastProfile {
   id                  BigInt   @id @default(autoincrement())
   cover_art_image_url String
   category_name       String
-  language            String
+  language            String   @db.VarChar(5)
   clean_content       Boolean
   apple_podcasts_code String?
   apple_podcasts_url  String?  @unique

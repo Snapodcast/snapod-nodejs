@@ -29,6 +29,7 @@ mutation {
 		data: {
 			name: "测试播客 Test Podcast"
 			description: "这是一个简单的测试播客"
+			type: "episodic"
 			profile: {
 				language: "en-us"
 				category: "Personal Journal"

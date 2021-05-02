@@ -1,4 +1,5 @@
-import { ArgsType, InputType, Field, ObjectType } from "type-graphql";
+import { Length, MinLength } from "class-validator";
+import { InputType, Field } from "type-graphql";
 
 @InputType()
 class PodcastProfileInput {
@@ -6,6 +7,7 @@ class PodcastProfileInput {
 		description: "Podcast language",
 		nullable: false,
 	})
+	@Length(2, 5)
 	public language: string;
 
 	@Field({
@@ -51,18 +53,21 @@ export class PodcastInput {
 		description: "Podcast name",
 		nullable: false,
 	})
+	@Length(1, 255)
 	public name: string;
 
 	@Field({
 		description: "Podcast description",
 		nullable: false,
 	})
+	@MinLength(1)
 	public description: string;
 
 	@Field({
 		description: "Podcast type",
 		nullable: false,
 	})
+	@Length(6, 8)
 	public type: string;
 
 	@Field(() => PodcastProfileInput, {

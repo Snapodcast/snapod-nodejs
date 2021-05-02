@@ -118,7 +118,7 @@ export class PodcastsResolver {
 			};
 		}
 		// create podcast
-		await prisma.podcast
+		return await prisma.podcast
 			.create({
 				data: {
 					name: input.name,
@@ -134,10 +134,6 @@ export class PodcastsResolver {
 			.catch(() => {
 				throw new BadRequestError("An unexpected error has occurred");
 			});
-
-		return {
-			cuid: podcast_cuid,
-		};
 	}
 
 	@Mutation((_returns) => Podcast, {
