@@ -43,8 +43,8 @@ model PodcastProfile {
   copyright           String?
   ownerName           String?
   ownerEmail          String?
-  block               Boolean?
-  complete            Boolean?
+  block               Boolean? @default(false)
+  complete            Boolean? @default(false)
   new_feed_url        String?
   podcast             Podcast? @relation(fields: [podcastCuid], references: [cuid])
   podcastCuid         String?  @unique

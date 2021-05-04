@@ -70,7 +70,7 @@ export class PodcastsResolver {
 
 	@Query((_returns) => Podcast, {
 		nullable: true,
-		description: "Get a podcast's profile",
+		description: "Get a podcast's info and profile",
 	})
 	async podcast(@Arg("podcastCuid") podcastCuid: string) {
 		return await prisma.podcast.findUnique({
@@ -94,28 +94,13 @@ export class PodcastsResolver {
 	) {
 		authentication(ctx, authorCuid, false);
 		const podcast_cuid = cuid();
-		let podcast_profile = {
-			language: input.profile.language,
-			category_name: input.profile.category,
-			clean_content: input.profile.contentClean,
-			cover_art_image_url: input.profile.coverImageUrl,
-		};
+		let podcast_profile: any = input.profile;
 		if (input.profile.copyright) {
-			podcast_profile = {
-				...podcast_profile,
-				...{
-					copyright: input.profile.copyright,
-				},
-			};
+			podcast_profile.copyright = input.profile.copyright;
 		}
 		if (input.profile.ownerName && input.profile.ownerEmail) {
-			podcast_profile = {
-				...podcast_profile,
-				...{
-					ownerName: input.profile.ownerName,
-					ownerEmail: input.profile.ownerEmail,
-				},
-			};
+			podcast_profile.ownerName = input.profile.ownerName;
+			podcast_profile.ownerEmail = input.profile.ownerEmail;
 		}
 		// create podcast
 		return await prisma.podcast
@@ -136,50 +121,41 @@ export class PodcastsResolver {
 			});
 	}
 
-	@Mutation((_returns) => Podcast, {
+	@Mutation((_returns) => VoidOutput, {
 		nullable: false,
-		description: "Modify a podcast's info",
+		description: "Modify a podcast's info and profile",
 	})
-	async modifyPodcastInfo(
+	async modifyPodcast(
 		@Arg("podcastCuid") podcastCuid: string,
-		@Arg("data") input: ModifyInfoInput,
+		@Arg("info") infoInput: ModifyInfoInput,
+		@Arg("profile") profileInput: ModifyProfileInput,
 		@Ctx() ctx: JWTContext
 	) {
 		authentication(ctx, podcastCuid, true);
 		// modify podcast
-		return await prisma.podcast
-			.update({
-				where: {
-					cuid: podcastCuid,
-				},
-				data: input,
-			})
-			.catch(() => {
-				throw new BadRequestError("An unexpected error has occurred");
-			});
-	}
-
-	@Mutation((_returns) => PodcastProfile, {
-		nullable: false,
-		description: "Modify a podcast's profile",
-	})
-	async modifyPodcastProfile(
-		@Arg("podcastCuid") podcastCuid: string,
-		@Arg("data") input: ModifyProfileInput,
-		@Ctx() ctx: JWTContext
-	) {
-		authentication(ctx, podcastCuid, true);
+		const modifyInfo = prisma.podcast.update({
+			where: {
+				cuid: podcastCuid,
+			},
+			data: infoInput,
+		});
 		// modify podcast profile
-		return await prisma.podcastProfile
-			.update({
-				where: {
-					podcastCuid: podcastCuid,
-				},
-				data: input,
-			})
-			.catch(() => {
-				throw new BadRequestError("An unexpected error has occurred");
-			});
+		const modifyProfile = prisma.podcastProfile.update({
+			where: {
+				podcastCuid: podcastCuid,
+			},
+			data: profileInput,
+		});
+
+		await prisma.$transaction([modifyInfo, modifyProfile]).catch(() => {
+			throw new BadRequestError("An unexpected error has occurred");
+		});
+
+		return {
+			status: true,
+			message: "success",
+			name: infoInput.name,
+		};
 	}
 
 	@Mutation((_returns) => VoidOutput, {

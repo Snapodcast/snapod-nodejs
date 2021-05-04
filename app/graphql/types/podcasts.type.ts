@@ -1,4 +1,4 @@
-import { Length, MinLength } from "class-validator";
+import { Length, MinLength, IsIn } from "class-validator";
 import { InputType, Field } from "type-graphql";
 
 @InputType()
@@ -67,7 +67,7 @@ export class PodcastInput {
 		description: "Podcast type",
 		nullable: false,
 	})
-	@Length(6, 8)
+	@IsIn(["episodic", "serial"])
 	public type: string;
 
 	@Field(() => PodcastProfileInput, {
@@ -103,6 +103,7 @@ export class ModifyInfoInput {
 		description: "Podcast type",
 		nullable: true,
 	})
+	@IsIn(["episodic", "serial"])
 	public type: string;
 }
 
@@ -130,7 +131,7 @@ export class ModifyProfileInput {
 		description: "Podcast cover art url",
 		nullable: true,
 	})
-	public cover_art_image_url: string;
+	public cover_art_image_url?: string;
 
 	@Field((_type) => String, {
 		description: "Podcast Apple Podcasts Code",
@@ -234,15 +235,21 @@ export class ModifyProfileInput {
 	})
 	public ownerEmail?: string;
 
-	@Field((_type) => String, {
+	@Field((_type) => Boolean, {
 		description: "Podcast copyright",
 		nullable: true,
 	})
 	public block?: boolean;
 
-	@Field((_type) => String, {
+	@Field((_type) => Boolean, {
 		description: "Podcast copyright",
 		nullable: true,
 	})
 	public complete?: boolean;
+
+	@Field((_type) => String, {
+		description: "Podcast new feed URL",
+		nullable: true,
+	})
+	public new_feed_url?: string;
 }

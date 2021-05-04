@@ -23,11 +23,6 @@ export class Podcast {
 	})
 	createdAt!: Date;
 
-	@Field((_type) => Date, {
-		nullable: false,
-	})
-	updatedAt!: Date;
-
 	@Field((_type) => String, {
 		nullable: false,
 	})

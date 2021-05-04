@@ -13,4 +13,10 @@ export class VoidOutput {
 		nullable: false,
 	})
 	public message: string;
+
+	@Field({
+		description: "Void return name",
+		nullable: true,
+	})
+	public name: string;
 }
