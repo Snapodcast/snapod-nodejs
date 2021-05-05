@@ -142,7 +142,7 @@ export class PodcastsResolver {
 		// modify podcast profile
 		const modifyProfile = prisma.podcastProfile.update({
 			where: {
-				podcastCuid: podcastCuid,
+				podcastCuid,
 			},
 			data: profileInput,
 		});

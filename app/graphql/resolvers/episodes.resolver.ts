@@ -113,13 +113,7 @@ export class EpisodesResolver {
 					podcastCuid: podcastCuid,
 					cuid: episode_cuid,
 					profile: {
-						create: {
-							audio_url: input.profile.audio_url,
-							audio_length: input.profile.audio_length,
-							audio_size: input.profile.audio_size,
-							clean_content: input.profile.clean_content,
-							episode_type: input.profile.episode_type,
-						},
+						create: input.profile,
 					},
 				},
 			})
@@ -132,50 +126,40 @@ export class EpisodesResolver {
 		};
 	}
 
-	@Mutation((_returns) => Episode, {
+	@Mutation((_returns) => VoidOutput, {
 		nullable: false,
 		description: "Modify an episode's info",
 	})
 	async modifyEpisodeInfo(
 		@Arg("episodeCuid") episodeCuid: string,
-		@Arg("data") input: ModifyEpisodeInfoInput,
+		@Arg("info") infoInput: ModifyEpisodeInfoInput,
+		@Arg("profile") profileInput: ModifyEpisodeProfileInput,
 		@Ctx() ctx: JWTContext
 	) {
 		authentication(ctx, episodeCuid, true);
-		// modify podcast
-		return await prisma.episode
-			.update({
-				where: {
-					cuid: episodeCuid,
-				},
-				data: input,
-			})
-			.catch(() => {
-				throw new BadRequestError("An unexpected error has occurred");
-			});
-	}
+		// modify episode info
+		const modifyInfo = prisma.episode.update({
+			where: {
+				cuid: episodeCuid,
+			},
+			data: infoInput,
+		});
+		// modify episode profile
+		const modifyProfile = prisma.episodeProfile.update({
+			where: {
+				episodeCuid,
+			},
+			data: profileInput,
+		});
 
-	@Mutation((_returns) => EpisodeProfile, {
-		nullable: false,
-		description: "Modify an episode's profile",
-	})
-	async modifyEpisodeProfile(
-		@Arg("episodeCuid") episodeCuid: string,
-		@Arg("data") input: ModifyEpisodeProfileInput,
-		@Ctx() ctx: JWTContext
-	) {
-		authentication(ctx, episodeCuid, true);
-		// modify podcast profile
-		return await prisma.episodeProfile
-			.update({
-				where: {
-					episodeCuid: episodeCuid,
-				},
-				data: input,
-			})
-			.catch(() => {
-				throw new BadRequestError("An unexpected error has occurred");
-			});
+		await prisma.$transaction([modifyInfo, modifyProfile]).catch(() => {
+			throw new BadRequestError("An unexpected error has occurred");
+		});
+
+		return {
+			status: true,
+			message: "success",
+		};
 	}
 
 	@Mutation((_returns) => VoidOutput, {
