@@ -43,6 +43,9 @@ const authentication = async (
 			.catch(() => {
 				throw new BadRequestError("An unexpected error has occurred");
 			});
+		if (!episodeResult) {
+			throw new BadRequestError("An unexpected error has occurred");
+		}
 		episodeOrPodcastCuid = episodeResult.podcastCuid;
 	}
 	podcastResult = await prisma.podcast
@@ -54,6 +57,9 @@ const authentication = async (
 		.catch(() => {
 			throw new BadRequestError("An unexpected error has occurred");
 		});
+	if (!podcastResult) {
+		throw new BadRequestError("An unexpected error has occurred");
+	}
 	if (ctx.state.user.cuid !== podcastResult.authorCuid) {
 		throw new UnauthorizedError();
 	}
@@ -110,6 +116,7 @@ export class EpisodesResolver {
 				data: {
 					title: input.title,
 					content: input.content,
+					published: input.published,
 					podcastCuid: podcastCuid,
 					cuid: episode_cuid,
 					profile: {
@@ -130,7 +137,7 @@ export class EpisodesResolver {
 		nullable: false,
 		description: "Modify an episode's info",
 	})
-	async modifyEpisodeInfo(
+	async modifyEpisode(
 		@Arg("episodeCuid") episodeCuid: string,
 		@Arg("info") infoInput: ModifyEpisodeInfoInput,
 		@Arg("profile") profileInput: ModifyEpisodeProfileInput,

@@ -53,7 +53,7 @@ model PodcastProfile {
 model EpisodeProfile {
   id                  BigInt   @id @default(autoincrement())
   audio_url           String
-  audio_length        Int
+  audio_duration      String
   audio_size          Int
   cover_art_image_url String?
   episode_type        String   @db.VarChar(7)

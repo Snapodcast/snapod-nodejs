@@ -1,3 +1,4 @@
+import { MaxLength } from "class-validator";
 import { ArgsType, InputType, Field, ObjectType } from "type-graphql";
 
 @InputType()
@@ -9,10 +10,10 @@ class EpisodeProfileInput {
 	public audio_url: string;
 
 	@Field({
-		description: "Episode audio length",
+		description: "Episode audio duration string",
 		nullable: false,
 	})
-	public audio_length: number;
+	public audio_duration: string;
 
 	@Field({
 		description: "Episode audio size",
@@ -31,6 +32,24 @@ class EpisodeProfileInput {
 		nullable: false,
 	})
 	public clean_content: boolean;
+
+	@Field({
+		description: "Episode cover art URL",
+		nullable: true,
+	})
+	public cover_art_image_url?: string;
+
+	@Field({
+		description: "Episode season number",
+		nullable: true,
+	})
+	public season_number?: number;
+
+	@Field({
+		description: "Episode number",
+		nullable: true,
+	})
+	public episode_number?: number;
 }
 
 @InputType()
@@ -39,6 +58,7 @@ export class EpisodeInput {
 		description: "Episode title",
 		nullable: false,
 	})
+	@MaxLength(255)
 	public title: string;
 
 	@Field({
@@ -47,17 +67,17 @@ export class EpisodeInput {
 	})
 	public content: string;
 
+	@Field({
+		description: "Episode publish status",
+		nullable: true,
+	})
+	public published?: boolean;
+
 	@Field(() => EpisodeProfileInput, {
 		description: "Episode profile",
 		nullable: false,
 	})
-	public profile: {
-		audio_url: string;
-		audio_length: number;
-		audio_size: number;
-		episode_type: string;
-		clean_content: boolean;
-	};
+	public profile: EpisodeProfileInput;
 }
 
 @InputType()
@@ -66,6 +86,7 @@ export class ModifyEpisodeInfoInput {
 		description: "Episode title",
 		nullable: true,
 	})
+	@MaxLength(255)
 	public title?: string;
 
 	@Field({
@@ -73,6 +94,12 @@ export class ModifyEpisodeInfoInput {
 		nullable: true,
 	})
 	public content?: string;
+
+	@Field({
+		description: "Episode publish status",
+		nullable: true,
+	})
+	public published?: boolean;
 }
 
 @InputType()
@@ -84,10 +111,10 @@ export class ModifyEpisodeProfileInput {
 	public audio_url?: string;
 
 	@Field({
-		description: "Episode audio length",
+		description: "Episode audio duration string",
 		nullable: true,
 	})
-	public audio_length?: number;
+	public audio_duration?: string;
 
 	@Field({
 		description: "Episode audio size",

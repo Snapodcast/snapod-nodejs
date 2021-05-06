@@ -14,19 +14,19 @@ class PodcastProfileInput {
 		description: "Podcast category",
 		nullable: false,
 	})
-	public category: string;
+	public category_name: string;
 
 	@Field({
 		description: "Podcast content type",
 		nullable: false,
 	})
-	public contentClean: boolean;
+	public clean_content: boolean;
 
 	@Field({
 		description: "Podcast cover art url",
 		nullable: false,
 	})
-	coverImageUrl: string;
+	cover_art_image_url: string;
 
 	@Field({
 		description: "Podcast copyright",
@@ -74,15 +74,7 @@ export class PodcastInput {
 		description: "Podcast profile",
 		nullable: false,
 	})
-	public profile: {
-		language: string;
-		category: string;
-		contentClean: boolean;
-		coverImageUrl: string;
-		copyright?: string;
-		ownerName?: string;
-		ownerEmail?: string;
-	};
+	public profile: PodcastProfileInput;
 }
 
 @InputType()

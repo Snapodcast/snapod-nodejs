@@ -44,5 +44,8 @@ export class Episode {
 	})
 	podcastCuid!: string;
 
+	@Field((_type) => EpisodeProfile, {
+		nullable: true,
+	})
 	profile?: EpisodeProfile | null;
 }
