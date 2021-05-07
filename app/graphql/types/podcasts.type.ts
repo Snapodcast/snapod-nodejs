@@ -96,7 +96,7 @@ export class ModifyInfoInput {
 		nullable: true,
 	})
 	@IsIn(["episodic", "serial"])
-	public type: string;
+	public type?: string;
 }
 
 @InputType()
