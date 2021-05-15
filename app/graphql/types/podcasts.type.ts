@@ -244,4 +244,16 @@ export class ModifyProfileInput {
 		nullable: true,
 	})
 	public new_feed_url?: string;
+
+	@Field((_type) => String, {
+		description: "Snapod site URL",
+		nullable: true,
+	})
+	public snapod_site_url: string;
+
+	@Field((_type) => String, {
+		description: "Snapod site custom URL",
+		nullable: true,
+	})
+	public snapod_site_custom_url: string;
 }

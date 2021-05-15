@@ -8,7 +8,6 @@ import {
 } from "type-graphql";
 import { BadRequestError } from "routing-controllers";
 import { Episode } from "../models/Episode";
-import { EpisodeProfile } from "../models/EpisodeProfile";
 import prisma from "../../helpers/prisma.client";
 import cuid from "cuid";
 import { Context } from "koa";

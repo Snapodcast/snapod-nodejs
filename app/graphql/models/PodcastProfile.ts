@@ -137,4 +137,14 @@ export class PodcastProfile {
 		nullable: false,
 	})
 	podcastCuid!: string;
+
+	@Field((_type) => String, {
+		nullable: true,
+	})
+	snapod_site_url: string;
+
+	@Field((_type) => String, {
+		nullable: true,
+	})
+	snapod_site_custom_url: string;
 }

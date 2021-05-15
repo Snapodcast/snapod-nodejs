@@ -21,33 +21,35 @@ model Podcast {
 }
 
 model PodcastProfile {
-  id                  BigInt   @id @default(autoincrement())
-  cover_art_image_url String
-  category_name       String
-  language            String   @db.VarChar(5)
-  clean_content       Boolean
-  apple_podcasts_code String?
-  apple_podcasts_url  String?  @unique
-  google_podcasts_url String?  @unique
-  breaker_url         String?  @unique
-  castbox_url         String?  @unique
-  overcast_url        String?  @unique
-  pocketcast_url      String?  @unique
-  radiopublic_url     String?  @unique
-  spotify             String?  @unique
-  netease_url         String?  @unique
-  qqmusic_url         String?  @unique
-  ximalaya_url        String?  @unique
-  xiaoyuzhou_url      String?  @unique
-  website_url         String?
-  copyright           String?
-  ownerName           String?
-  ownerEmail          String?
-  block               Boolean? @default(false)
-  complete            Boolean? @default(false)
-  new_feed_url        String?
-  podcast             Podcast? @relation(fields: [podcastCuid], references: [cuid])
-  podcastCuid         String?  @unique
+  id                     BigInt   @id @default(autoincrement())
+  cover_art_image_url    String
+  category_name          String
+  language               String   @db.VarChar(5)
+  clean_content          Boolean
+  apple_podcasts_code    String?
+  apple_podcasts_url     String?  @unique
+  google_podcasts_url    String?  @unique
+  breaker_url            String?  @unique
+  castbox_url            String?  @unique
+  overcast_url           String?  @unique
+  pocketcast_url         String?  @unique
+  radiopublic_url        String?  @unique
+  spotify                String?  @unique
+  netease_url            String?  @unique
+  qqmusic_url            String?  @unique
+  ximalaya_url           String?  @unique
+  xiaoyuzhou_url         String?  @unique
+  website_url            String?
+  copyright              String?
+  ownerName              String?
+  ownerEmail             String?
+  block                  Boolean? @default(false)
+  complete               Boolean? @default(false)
+  new_feed_url           String?
+  snapod_site_url        String?  @unique
+  snapod_site_custom_url String?  @unique
+  podcast                Podcast? @relation(fields: [podcastCuid], references: [cuid])
+  podcastCuid            String?  @unique
 }
 
 model EpisodeProfile {
