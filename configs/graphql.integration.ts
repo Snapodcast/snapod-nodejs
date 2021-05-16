@@ -10,7 +10,7 @@ export async function useGraphQL(
 	// create Apollo GraphQL server
 	const server = new ApolloServer({
 		schema: await buildSchema({
-			resolvers: [path.resolve(__dirname + "/../app/graphql/resolvers/*.ts")],
+			resolvers: [path.resolve(__dirname + "/../app/graphql/resolvers/*")],
 		}),
 		introspection: true,
 		context: ({ ctx }) => ctx,

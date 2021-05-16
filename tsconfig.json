@@ -4,6 +4,7 @@
     "moduleResolution": "Node",
     "module": "commonjs",
     "outDir": "./releases",
+    "target": "ES5",
     "lib": [
       "ESNext",
       "esnext.asynciterable"
@@ -35,16 +36,11 @@
   },
   "compileOnSave": false,
   "includes": [
-    "app/**/*",
-    "configs/**/*",
     "**/*.ts",
-    "**/*.tsx"
-  ],
-  "files": [
-    "app.ts",
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "releases"
   ]
 }

@@ -6,7 +6,9 @@
   "main": "app.ts",
   "scripts": {
     "dev": "export NODE_ENV=development; nodemon --config nodemon.json",
-    "start": "export NODE_ENV=production; nodemon --config nodemon.json"
+    "build": "rm -rf releases && tsc",
+    "release": "sh ./scripts/release.sh",
+    "start": "export NODE_ENV=production; node releases/app.js"
   },
   "repository": "git@github.com:Snapodcast/snapod-nodejs.git",
   "author": "HelipengTony <tony.hlp@hotmail.com>",
@@ -28,6 +30,7 @@
     "koa-router": "^10.0.0",
     "nodemailer": "^6.6.0",
     "pbkdf2": "^3.1.2",
+    "prisma": "^2.21.2",
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.9.0",
     "type-graphql": "^1.1.1",
@@ -47,7 +50,6 @@
     "nodemon": "^2.0.7",
     "npm": "^7.11.1",
     "prettier": "^2.2.1",
-    "prisma": "^2.21.2",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4",
     "typescript-transform-paths": "^2.2.3"
