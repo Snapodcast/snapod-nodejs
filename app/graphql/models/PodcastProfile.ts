@@ -147,4 +147,9 @@ export class PodcastProfile {
 		nullable: true,
 	})
 	snapod_site_custom_url: string;
+
+	@Field((_type) => String, {
+		nullable: true,
+	})
+	snapod_site_theme: string
 }

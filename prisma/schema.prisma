@@ -48,6 +48,7 @@ model PodcastProfile {
   new_feed_url           String?
   snapod_site_url        String?  @unique
   snapod_site_custom_url String?  @unique
+  snapod_site_theme      String?  @default("default")
   podcast                Podcast? @relation(fields: [podcastCuid], references: [cuid])
   podcastCuid            String?  @unique
 }

@@ -18,7 +18,6 @@ import {
 	ModifyProfileInput,
 } from "../types/podcasts.type";
 import { VoidOutput } from "../types/global.type";
-import { PodcastProfile } from "../models/PodcastProfile";
 
 interface JWTContext extends Context {
 	state: {

@@ -256,4 +256,10 @@ export class ModifyProfileInput {
 		nullable: true,
 	})
 	public snapod_site_custom_url: string;
+
+	@Field((_type) => String, {
+		description: "Snapod site theme name",
+		nullable: true,
+	})
+	snapod_site_theme: string
 }
