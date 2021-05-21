@@ -15,9 +15,9 @@ BigInt.prototype.toJSON = function () {
 @Service()
 export class SiteInfoController {
 	@Post("/siteInfo")
-	async fetchRSSData(@Body() body: { customUrl: string, podcastId: number }) {
+	async fetchRSSData(@Body() body: { customUrl: string, podcastId: number, episodeId: number }) {
 
-		if (!body.customUrl && !body.podcastId) {
+		if (!body.customUrl && !body.podcastId && !body.episodeId) {
 			throw new BadRequestError("Invalid request");
 		}
 
@@ -30,9 +30,29 @@ export class SiteInfoController {
 				include: {
 					podcast: {
 						include: {
-							author: true
+							author: {
+								select: {
+									name: true,
+									email: true
+								}
+							},
+							episodes: {
+								include: {
+									profile: true
+								}
+							}
 						}
 					}
+				},
+			});
+		} else if (body.episodeId) {
+			result = await prisma.episode.findUnique({
+				where: {
+					id: body.episodeId,
+				},
+				include: {
+					profile: true,
+					podcast: true
 				},
 			});
 		} else {
@@ -42,7 +62,17 @@ export class SiteInfoController {
 				},
 				include: {
 					profile: true,
-					author: true
+					author: {
+						select: {
+							name: true,
+							email: true
+						}
+					},
+					episodes: {
+						include: {
+							profile: true
+						}
+					}
 				},
 			});
 		}
