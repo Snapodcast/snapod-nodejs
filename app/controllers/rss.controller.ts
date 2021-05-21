@@ -26,7 +26,12 @@ export class RSSController {
 			},
 			include: {
 				profile: true,
-				author: true,
+				author: {
+					select: {
+						name: true,
+						email: true
+					}
+				},
 				episodes: {
 					include: {
 						profile: true,
