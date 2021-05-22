@@ -18,6 +18,9 @@ import {
 	ModifyProfileInput,
 } from "../types/podcasts.type";
 import { VoidOutput } from "../types/global.type";
+import NetlifyAPI from "netlify";
+
+const client = new NetlifyAPI(process.env.NETLIFY_KEY)
 
 interface JWTContext extends Context {
 	state: {
@@ -25,6 +28,7 @@ interface JWTContext extends Context {
 	};
 }
 
+// authenticate current requester
 const authentication = async (
 	ctx: JWTContext,
 	podcastOrUserCuid: string,
@@ -185,6 +189,86 @@ export class PodcastsResolver {
 			.catch(() => {
 				throw new BadRequestError("An unexpected error has occurred");
 			});
+
+		return {
+			status: true,
+			message: "success",
+		};
+	}
+
+	@Mutation((_returns) => VoidOutput, {
+		nullable: false,
+		description: "Change custom domain for Snapod site",
+	})
+	async modifyCustomDomain(
+		@Arg("podcastCuid") podcastCuid: string,
+		@Arg("customDomain") customDomain: string,
+		@Ctx() ctx: JWTContext
+	) {
+		authentication(ctx, podcastCuid, true);
+
+		// get current domain
+		const result = await prisma.podcastProfile.findUnique({
+			where: {
+				podcastCuid
+			},
+			select: {
+				snapod_site_custom_url: true
+			}
+		})
+		const currentDomain = result.snapod_site_custom_url;
+
+		// update database
+		await prisma.podcastProfile.update({
+			where: {
+				podcastCuid
+			},
+			data: {
+				snapod_site_custom_url: customDomain
+			}
+		})
+
+		/* Netlify Operations */
+		// fetch snapod site
+		const snapodSite = await client.getSite({
+			site_id: "c4aa5329-e0a4-45e9-a979-84daec85ebb9"
+		})
+		const existingDomains = snapodSite.domain_aliases;
+
+		console.log(snapodSite);
+
+		if (customDomain && customDomain !== '') {
+			// changing the domain
+			// validate domain
+			if (customDomain.indexOf(".") === -1) {
+				throw new BadRequestError("Invalid domain")
+			}
+
+			// proceeds if target domain does not exist
+			if (existingDomains.indexOf(customDomain) === -1) {
+				// update domain aliases
+				await client.updateSite({
+					site_id: "c4aa5329-e0a4-45e9-a979-84daec85ebb9",
+					body: {
+						domain_aliases: [...existingDomains, customDomain]
+					}
+				})
+			}
+		} else {
+			// removing the domain
+			const domainIndex = existingDomains.indexOf(currentDomain);
+			// proceeds if current domain exists
+			if (domainIndex !== -1) {
+				existingDomains.splice(domainIndex, 1);
+				// update domain aliases
+				await client.updateSite({
+					site_id: "c4aa5329-e0a4-45e9-a979-84daec85ebb9",
+					body: {
+						domain_aliases: existingDomains
+					}
+				})
+			}
+		}
 
 		return {
 			status: true,
