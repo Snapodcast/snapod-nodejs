@@ -28,7 +28,7 @@ export class ForgotRequestController {
 		const findResult = await this.forgotService
 			.findMatch(body.email)
 			.catch(() => {
-				throw new InternalServerError("Internal server error");
+				throw new InternalServerError("Service temporarily unavailable");
 			})
 			.finally(async () => {
 				await prisma.$disconnect();

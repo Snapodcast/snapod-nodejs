@@ -8,7 +8,8 @@
     "dev": "export NODE_ENV=development; nodemon --config nodemon.json",
     "build": "rm -rf releases && tsc",
     "release": "sh ./scripts/release.sh",
-    "start": "export NODE_ENV=production; node releases/app.js"
+    "start": "export NODE_ENV=production; node releases/app.js",
+    "upgrade": "ncu && npm install"
   },
   "repository": "git@github.com:Snapodcast/snapod-nodejs.git",
   "author": "HelipengTony <tony.hlp@hotmail.com>",
@@ -27,6 +28,7 @@
     "koa-bodyparser": "^4.3.0",
     "koa-jwt": "^4.0.1",
     "koa-multer": "^1.0.2",
+    "koa-ratelimit": "^5.0.0",
     "koa-router": "^10.0.0",
     "netlify": "^6.1.29",
     "nodemailer": "^6.6.0",
@@ -43,6 +45,7 @@
     "@types/jsonwebtoken": "^8.5.1",
     "@types/koa": "^2.13.1",
     "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-ratelimit": "^4.2.2",
     "@types/koa-router": "^7.4.2",
     "@types/node": "^14.14.42",
     "@types/nodemailer": "^6.4.1",

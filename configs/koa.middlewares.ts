@@ -1,11 +1,12 @@
 import Koa, { Context } from "koa";
 import bodyParser from "koa-bodyparser";
 import jwt from "koa-jwt";
+import ratelimit from 'koa-ratelimit';
 
 export const useMiddlewares = <T extends Koa>(app: T): T => {
 	app.use(bodyParser());
 
-	// handle unauthorized request
+	// Handle unauthorized request
 	app.use(async (ctx: Context, next: (err?: any) => any) => {
 		return next().catch((err: any) => {
 			if (401 == err.status) {
@@ -13,7 +14,7 @@ export const useMiddlewares = <T extends Koa>(app: T): T => {
 				ctx.body = "Unauthorized";
 			} else {
 				ctx.status = 500;
-				ctx.body = "Internal Server Error";
+				ctx.body = "Service temporarily unavailable";
 			}
 		});
 	});
@@ -35,6 +36,25 @@ export const useMiddlewares = <T extends Koa>(app: T): T => {
 			method: "OPTIONS",
 		})
 	);
+
+	// RateLimit memory driver
+	const db = new Map();
+
+	// RateLimit middleware (100 request per minute)
+	app.use(ratelimit({
+		driver: 'memory',
+		db: db,
+		duration: 60000,
+		errorMessage: 'Rate limit exceeded',
+		id: (ctx) => ctx.ip,
+		headers: {
+			remaining: 'Rate-Limit-Remaining',
+			reset: 'Rate-Limit-Reset',
+			total: 'Rate-Limit-Total'
+		},
+		max: 100,
+		disableHeader: false,
+	}));
 
 	return app;
 };

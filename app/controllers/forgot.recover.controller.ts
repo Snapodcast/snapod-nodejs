@@ -45,7 +45,7 @@ export class ForgotRecoverController {
 		const findRequestResult = await this.forgotService
 			.findRequest(body.code)
 			.catch(() => {
-				throw new InternalServerError("Internal server error");
+				throw new InternalServerError("Service temporarily unavailable");
 			})
 			.finally(async () => {
 				await prisma.$disconnect();
