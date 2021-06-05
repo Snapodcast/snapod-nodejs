@@ -19,7 +19,9 @@ import {
 } from "../types/podcasts.type";
 import { VoidOutput } from "../types/global.type";
 import NetlifyAPI from "netlify";
+import Parser from 'rss-parser';
 
+const parser: Parser = new Parser();
 const client = new NetlifyAPI(process.env.NETLIFY_KEY)
 
 interface JWTContext extends Context {
@@ -268,6 +270,33 @@ export class PodcastsResolver {
 					}
 				})
 			}
+		}
+
+		return {
+			status: true,
+			message: "success",
+		};
+	}
+
+	@Mutation((_returns) => VoidOutput, {
+		nullable: false,
+		description: "Import a podcast",
+	})
+	async importPodcast(
+		@Arg("authorCuid") authorCuid: string,
+		@Arg("podcastRssUrl") podcastRssUrl: string,
+		@Ctx() ctx: JWTContext
+	) {
+		authentication(ctx, authorCuid, false);
+		try {
+			const feed = await parser.parseURL(podcastRssUrl);
+
+			feed.items.forEach(item => {
+				console.log(item)
+			});
+
+		} catch (e) {
+			throw new BadRequestError("Invalid RSS URL")
 		}
 
 		return {

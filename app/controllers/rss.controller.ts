@@ -15,14 +15,14 @@ BigInt.prototype.toJSON = function () {
 @Service()
 export class RSSController {
 	@Post("/rss")
-	async fetchRSSData(@Body() body: { podcastCuid: string }) {
-		if (!body.podcastCuid) {
+	async fetchRSSData(@Body() body: { podcastId: number }) {
+		if (!body.podcastId) {
 			throw new BadRequestError("Invalid request");
 		}
 
 		const result = await prisma.podcast.findUnique({
 			where: {
-				cuid: body.podcastCuid,
+				id: body.podcastId,
 			},
 			include: {
 				profile: true,
