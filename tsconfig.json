@@ -7,7 +7,8 @@
     "target": "ES5",
     "lib": [
       "ESNext",
-      "esnext.asynciterable"
+      "esnext.asynciterable",
+      "dom"
     ],
     "removeComments": true,
     "noImplicitAny": false,
