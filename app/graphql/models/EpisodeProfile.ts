@@ -17,9 +17,9 @@ export class EpisodeProfile {
 	audio_url!: string;
 
 	@TypeGraphQL.Field((_type) => String, {
-		nullable: false,
+		nullable: true,
 	})
-	audio_duration!: string;
+	audio_duration?: string;
 
 	@TypeGraphQL.Field((_type) => TypeGraphQL.Int, {
 		nullable: false,

@@ -17,10 +17,12 @@ import {
 	ModifyInfoInput,
 	ModifyProfileInput,
 } from "../types/podcasts.type";
-import { VoidOutput } from "../types/global.type";
+import { VoidOutput, Preview } from "../types/global.type";
 import NetlifyAPI from "netlify";
 import Parser from 'rss-parser';
+import TurndownService from 'turndown'
 
+const turndownService = new TurndownService();
 const parser: Parser = new Parser();
 const client = new NetlifyAPI(process.env.NETLIFY_KEY)
 
@@ -278,9 +280,51 @@ export class PodcastsResolver {
 		};
 	}
 
-	@Mutation((_returns) => VoidOutput, {
+	@Query((_returns) => Preview, {
+		nullable: true,
+		description: "Preview a podcast from a RSS url",
+	})
+	async previewPodcast(@Arg("podcastRssUrl") podcastRssUrl: string): Promise<Preview> {
+		const feed = await parser.parseURL(podcastRssUrl);
+		let episodes = [];
+		feed.items.map((item) => {
+			episodes[episodes.length] = {
+				episode: {
+					title: item.title,
+					content: item.content
+				},
+				profile: {
+					audio_url: item.enclosure.url,
+					audio_size: item.enclosure.length,
+					cover_art_image_url: item.itunes?.image,
+					clean_content: item.itunes?.explicit !== 'no',
+					episode_number: parseInt(item.itunes?.episode)
+				}
+			}
+		})
+		return {
+			podcast: {
+				name: feed.title,
+				description: feed.description,
+				author: feed.author
+			},
+			profile: {
+				cover_art_image_url: feed.image.url,
+				category_name: feed.itunes?.categories[0],
+				language: feed.language,
+				clean_content: feed.itunes?.explicit !== 'no',
+				website_url: feed.link,
+				copyright: feed.copyright,
+				ownerEmail: feed.itunes?.owner?.email,
+				ownerName: feed.itunes?.owner?.name
+			},
+			episodes: episodes
+		}
+	}
+
+	@Mutation((_returns) => Podcast, {
 		nullable: false,
-		description: "Import a podcast",
+		description: "Import a podcast via RSS url",
 	})
 	async importPodcast(
 		@Arg("authorCuid") authorCuid: string,
@@ -288,20 +332,65 @@ export class PodcastsResolver {
 		@Ctx() ctx: JWTContext
 	) {
 		authentication(ctx, authorCuid, false);
-		try {
-			const feed = await parser.parseURL(podcastRssUrl);
+		const podcastCuid = cuid();
 
-			feed.items.forEach(item => {
-				console.log(item)
+		const feed = await parser.parseURL(podcastRssUrl);
+
+		// create podcast
+		const importedPodcast = await prisma.podcast
+			.create({
+				data: {
+					name: feed.title,
+					description: feed.description,
+					authorCuid: authorCuid,
+					cuid: podcastCuid,
+					type: "episodic",
+					profile: {
+						create: {
+							cover_art_image_url: feed.image.url,
+							category_name: feed.itunes?.categories[0],
+							language: feed.language,
+							clean_content: feed.itunes?.explicit !== 'no',
+							website_url: feed.link,
+							copyright: feed.copyright,
+							ownerEmail: feed.itunes?.owner?.email,
+							ownerName: feed.itunes?.owner?.name
+						},
+					},
+				},
+			})
+			.catch(() => {
+				throw new BadRequestError("Error importing a podcast");
 			});
 
-		} catch (e) {
-			throw new BadRequestError("Invalid RSS URL")
-		}
+		// import episodes
+		await Promise.all(feed.items.map(async (item) => {
+			await prisma.episode
+				.create({
+					data: {
+						title: item.title,
+						content: turndownService.turndown(item.content),
+						published: true,
+						podcastCuid: podcastCuid,
+						cuid: cuid(),
+						profile: {
+							create: {
+								audio_url: item.enclosure.url,
+								audio_size: typeof item.enclosure.length === "string" ? parseInt(item.enclosure.length) : item.enclosure.length,
+								cover_art_image_url: item.itunes?.image,
+								clean_content: item.itunes?.explicit !== 'no',
+								episode_number: parseInt(item.itunes?.episode),
+								episode_type: "full",
+							},
+						},
+					},
+				})
+				.catch((e) => {
+					console.log(e);
+					throw new BadRequestError("Error importing an episode");
+				});
+		}))
 
-		return {
-			status: true,
-			message: "success",
-		};
+		return importedPodcast;
 	}
 }
