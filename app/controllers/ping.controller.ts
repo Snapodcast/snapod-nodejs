@@ -22,6 +22,13 @@ export class PingController {
 		});
 	}
 
+	@Get("/version")
+	async getVersion() {
+		return JSON.stringify({
+			version: process.env.npm_package_version,
+		});
+	}
+
 	@Post("/ping")
 	async postPong() {
 		return JSON.stringify({
