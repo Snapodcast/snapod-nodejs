@@ -16,6 +16,9 @@ export async function useGraphQL(
 		context: ({ ctx }) => ctx,
 	});
 
+	// wait for server to start
+	await server.start();
+
 	// register GraphQL middleware and start serving
 	server.applyMiddleware({
 		app,
