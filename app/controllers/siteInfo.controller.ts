@@ -46,7 +46,8 @@ export class SiteInfoController {
 										profile: true
 									}
 								},
-								author: true
+								author: true,
+								description: true
 							}
 						}
 					},
