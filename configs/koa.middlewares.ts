@@ -33,6 +33,7 @@ export const useMiddlewares = <T extends Koa>(app: T): T => {
 				`/v${process.env.SERVICE_VERSION}/api/forgot/request`,
 				`/v${process.env.SERVICE_VERSION}/api/rss`,
 				`/v${process.env.SERVICE_VERSION}/api/siteInfo`,
+				`/v${process.env.SERVICE_VERSION}/api/latestAppVersion`
 			],
 			method: "OPTIONS",
 		})

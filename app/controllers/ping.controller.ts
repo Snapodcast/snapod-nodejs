@@ -13,7 +13,7 @@ interface JWTContext extends Context {
 @JsonController()
 @Service()
 export class PingController {
-	constructor(private pingService: PingService) {}
+	constructor(private pingService: PingService) { }
 
 	@Get("/ping")
 	async getPong() {
@@ -26,6 +26,13 @@ export class PingController {
 	async getVersion() {
 		return JSON.stringify({
 			version: process.env.npm_package_version,
+		});
+	}
+
+	@Get("/latestAppVersion")
+	async getLatestAppVersion() {
+		return JSON.stringify({
+			version: "0.0.2",
 		});
 	}
 
