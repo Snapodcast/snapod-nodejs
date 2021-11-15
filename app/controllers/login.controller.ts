@@ -2,9 +2,9 @@ import {
 	BadRequestError,
 	UnauthorizedError,
 	NotFoundError,
-	Get,
+	Post,
+	Body,
 	JsonController,
-	QueryParam,
 	InternalServerError,
 } from "routing-controllers";
 import { Service } from "typedi";
@@ -19,16 +19,8 @@ import { CredentialInterface } from "../services/login.service";
 export class LoginController {
 	constructor(private loginService: LoginService) {}
 
-	@Get("/login")
-	async login(
-		@QueryParam("email") email: string,
-		@QueryParam("password") password: string
-	) {
-		const user: CredentialInterface = {
-			email,
-			password,
-		};
-
+	@Post("/login")
+	async login(@Body() user: CredentialInterface) {
 		// validate email
 		if (!user.email || !validator.isEmail(user.email)) {
 			throw new BadRequestError("Invalid email");
