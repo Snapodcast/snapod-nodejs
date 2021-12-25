@@ -32,7 +32,7 @@ export class PingController {
 	@Get("/latestAppVersion")
 	async getLatestAppVersion() {
 		return JSON.stringify({
-			version: "0.0.2",
+			version: "0.0.3",
 		});
 	}
 
