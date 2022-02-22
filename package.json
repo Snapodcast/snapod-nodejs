@@ -55,6 +55,8 @@
     "@types/pbkdf2": "^3.1.0",
     "@types/turndown": "^5.0.1",
     "@types/uuid": "^8.3.3",
+    "esbuild": "^0.14.23",
+    "esbuild-register": "^3.3.2",
     "install": "^0.13.0",
     "nodemon": "^2.0.15",
     "npm": "^8.3.0",

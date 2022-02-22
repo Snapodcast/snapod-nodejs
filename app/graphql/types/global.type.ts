@@ -1,20 +1,20 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from "type-graphql";
 
 @ObjectType()
 export class VoidOutput {
-	@Field({
+	@Field(() => Boolean, {
 		description: "Void return status",
 		nullable: false,
 	})
 	public status: boolean;
 
-	@Field({
+	@Field(() => String, {
 		description: "Void return message",
 		nullable: false,
 	})
 	public message: string;
 
-	@Field({
+	@Field(() => String, {
 		description: "Void return name",
 		nullable: true,
 	})
@@ -23,153 +23,153 @@ export class VoidOutput {
 
 @ObjectType()
 class PodcastPreview {
-	@Field({
+	@Field(() => String, {
 		description: "Podcast name",
 		nullable: true,
 	})
-	name?: string
+	name?: string;
 
-	@Field({
+	@Field(() => String, {
 		description: "Podcast description",
 		nullable: true,
 	})
-	description?: string
+	description?: string;
 
-	@Field({
+	@Field(() => String, {
 		description: "Podcast author",
 		nullable: true,
 	})
-	author?: string
+	author?: string;
 }
 
 @ObjectType()
 class ProfilePreview {
-	@Field({
+	@Field(() => String, {
 		description: "Podcast cover art image url",
 		nullable: true,
 	})
-	cover_art_image_url?: string
+	cover_art_image_url?: string;
 
-	@Field({
+	@Field(() => String, {
 		description: "Podcast primary category name",
 		nullable: true,
 	})
-	category_name?: string
+	category_name?: string;
 
-	@Field({
+	@Field(() => String, {
 		description: "Podcast language",
 		nullable: true,
 	})
-	language?: string
+	language?: string;
 
-	@Field({
+	@Field(() => Boolean, {
 		description: "Podcast clean content indicator",
 		nullable: true,
 	})
-	clean_content?: boolean
+	clean_content?: boolean;
 
-	@Field({
+	@Field(() => String, {
 		description: "Podcast website url",
 		nullable: true,
 	})
-	website_url?: string
+	website_url?: string;
 
-	@Field({
+	@Field(() => String, {
 		description: "Podcast copyright info",
 		nullable: true,
 	})
-	copyright?: string
+	copyright?: string;
 
-	@Field({
+	@Field(() => String, {
 		description: "Podcast owner name",
 		nullable: true,
 	})
-	ownerName?: string
+	ownerName?: string;
 
-	@Field({
+	@Field(() => String, {
 		description: "Podcast owner email",
 		nullable: true,
 	})
-	ownerEmail?: string
+	ownerEmail?: string;
 }
 
 @ObjectType()
 class EpisodePreview {
-	@Field({
+	@Field(() => String, {
 		description: "Episode title",
 		nullable: true,
 	})
-	title?: string
+	title?: string;
 
-	@Field({
+	@Field(() => String, {
 		description: "Episode content",
 		nullable: true,
 	})
-	content?: string
+	content?: string;
 }
 
 @ObjectType()
 class EpisodeProfilePreview {
-	@Field({
+	@Field(() => String, {
 		description: "Episode audio url",
 		nullable: true,
 	})
-	audio_url?: string
+	audio_url?: string;
 
-	@Field({
+	@Field(() => Int, {
 		description: "Episode audio size",
 		nullable: true,
 	})
-	audio_size?: number
+	audio_size?: number;
 
-	@Field({
+	@Field(() => String, {
 		description: "Episode cover art image url",
 		nullable: true,
 	})
-	cover_art_image_url?: string
+	cover_art_image_url?: string;
 
-	@Field({
+	@Field(() => Boolean, {
 		description: "Episode clean content indicator",
 		nullable: true,
 	})
-	clean_content?: boolean
+	clean_content?: boolean;
 
-	@Field({
+	@Field(() => Int, {
 		description: "Episode number",
 		nullable: true,
 	})
-	episode_number?: number
+	episode_number?: number;
 }
 
 @ObjectType()
 class PreviewEpisode {
-	@Field({
+	@Field(() => EpisodePreview, {
 		description: "Episode info",
 		nullable: false,
 	})
-	public episode: EpisodePreview
+	public episode: EpisodePreview;
 
-	@Field({
+	@Field(() => EpisodeProfilePreview, {
 		description: "Episode profile info",
-		nullable: false
+		nullable: false,
 	})
-	public profile: EpisodeProfilePreview
+	public profile: EpisodeProfilePreview;
 }
 
 @ObjectType()
 export class Preview {
-	@Field({
+	@Field(() => PodcastPreview, {
 		description: "Podcast info",
 		nullable: false,
 	})
-	public podcast: PodcastPreview
+	public podcast: PodcastPreview;
 
-	@Field({
+	@Field(() => ProfilePreview, {
 		description: "Podcast profile info",
-		nullable: false
+		nullable: false,
 	})
-	public profile: ProfilePreview
+	public profile: ProfilePreview;
 
-	@Field(type => [PreviewEpisode])
-	public episodes: PreviewEpisode[]
+	@Field(() => [PreviewEpisode])
+	public episodes: PreviewEpisode[];
 }
