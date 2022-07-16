@@ -7,10 +7,6 @@ import {
 import { Service } from "typedi";
 import prisma from "../helpers/prisma.client";
 
-BigInt.prototype.toJSON = function () {
-	return this.toString();
-};
-
 @JsonController()
 @Service()
 export class SiteInfoController {

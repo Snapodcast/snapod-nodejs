@@ -3,6 +3,11 @@ import { Server } from "http";
 import { createServer } from "./configs/koa.application";
 import { print } from "./utilities/print";
 
+// JSON stringify BigInt to string
+(BigInt as any).prototype.toJSON = function () {
+	return this.toString();
+};
+
 module.exports = (async (): Promise<Server> => {
 	try {
 		const app: Koa = await createServer();

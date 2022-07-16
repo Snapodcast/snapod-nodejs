@@ -6,10 +6,11 @@
   "main": "app.ts",
   "scripts": {
     "dev": "export NODE_ENV=development; nodemon --config nodemon.json",
-    "build": "rm -rf releases && tsc",
-    "release": "sh ./scripts/release.sh",
-    "start": "export NODE_ENV=production; node releases/app.js",
-    "upgrade": "ncu && npm install"
+    "build": "export NODE_ENV=production; prisma generate && prisma migrate deploy && tsc",
+    "start": "export NODE_ENV=production; node dist/app.js",
+    "release:aws": "sh ./scripts/aws-release.sh",
+    "upgrade": "ncu -u && npm install",
+    "clean": "rm -rf node_modules && rm package-lock.json"
   },
   "repository": "git@github.com:Snapodcast/snapod-nodejs.git",
   "author": "HelipengTony <tony.hlp@hotmail.com>",
@@ -17,12 +18,11 @@
   "dependencies": {
     "@prisma/client": "^4.0.0",
     "apollo-server-koa": "^3.5.0",
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.13.2",
+    "class-validator": "^0.12.2",
     "cuid": "^2.1.8",
     "dotenv": "^10.0.0",
     "duration-calculator": "^0.0.4",
-    "graphql": "^15.5.2",
+    "graphql": "^15.3.0",
     "graphql-scalars": "^1.14.1",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.4",
