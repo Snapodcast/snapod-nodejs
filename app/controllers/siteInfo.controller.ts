@@ -15,8 +15,9 @@ BigInt.prototype.toJSON = function () {
 @Service()
 export class SiteInfoController {
 	@Post("/siteInfo")
-	async fetchRSSData(@Body() body: { customURL: string, podcastId: number, episodeId: number }) {
-
+	async fetchRSSData(
+		@Body() body: { customURL: string; podcastId: number; episodeId: number }
+	) {
 		if (!body.customURL && !body.podcastId && !body.episodeId) {
 			throw new BadRequestError("Invalid request");
 		}
@@ -26,7 +27,7 @@ export class SiteInfoController {
 			if (body.episodeId) {
 				result = await prisma.podcastProfile.findUnique({
 					where: {
-						snapod_site_custom_url: body.customURL
+						snapod_site_custom_url: body.customURL,
 					},
 					select: {
 						podcast: {
@@ -35,27 +36,27 @@ export class SiteInfoController {
 								cuid: true,
 								profile: {
 									select: {
-										cover_art_image_url: true
-									}
+										cover_art_image_url: true,
+									},
 								},
 								episodes: {
 									where: {
-										id: body.episodeId
+										id: body.episodeId,
 									},
 									include: {
-										profile: true
-									}
+										profile: true,
+									},
 								},
 								author: true,
-								description: true
-							}
-						}
+								description: true,
+							},
+						},
 					},
 				});
 			} else {
 				result = await prisma.podcastProfile.findFirst({
 					where: {
-						snapod_site_custom_url: body.customURL
+						snapod_site_custom_url: body.customURL,
 					},
 					include: {
 						podcast: {
@@ -63,21 +64,21 @@ export class SiteInfoController {
 								author: {
 									select: {
 										name: true,
-										email: true
-									}
+										email: true,
+									},
 								},
 								episodes: {
 									include: {
-										profile: true
-									}
+										profile: true,
+									},
 								},
 								profile: {
 									select: {
-										cover_art_image_url: true
-									}
+										cover_art_image_url: true,
+									},
 								},
-							}
-						}
+							},
+						},
 					},
 				});
 			}
@@ -94,11 +95,11 @@ export class SiteInfoController {
 								author: true,
 								profile: {
 									select: {
-										cover_art_image_url: true
-									}
+										cover_art_image_url: true,
+									},
 								},
-							}
-						}
+							},
+						},
 					},
 				});
 			} else {
@@ -111,14 +112,14 @@ export class SiteInfoController {
 						author: {
 							select: {
 								name: true,
-								email: true
-							}
+								email: true,
+							},
 						},
 						episodes: {
 							include: {
-								profile: true
-							}
-						}
+								profile: true,
+							},
+						},
 					},
 				});
 			}

@@ -15,7 +15,7 @@
   "author": "HelipengTony <tony.hlp@hotmail.com>",
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "@prisma/client": "^3.7.0",
+    "@prisma/client": "^4.0.0",
     "apollo-server-koa": "^3.5.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
@@ -34,7 +34,7 @@
     "netlify": "^8.0.0",
     "nodemailer": "^6.6.3",
     "pbkdf2": "^3.1.2",
-    "prisma": "^3.7.0",
+    "prisma": "^4.0.0",
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.9.0",
     "rss-parser": "^3.12.0",

@@ -44,7 +44,7 @@ export class UsersResolver {
 				type: true,
 				name: true,
 			},
-		})
+		});
 	}
 
 	@Mutation((_returns) => User, {

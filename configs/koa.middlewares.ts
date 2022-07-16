@@ -1,7 +1,7 @@
 import Koa, { Context } from "koa";
 import bodyParser from "koa-bodyparser";
 import jwt from "koa-jwt";
-import ratelimit from 'koa-ratelimit';
+import ratelimit from "koa-ratelimit";
 
 export const useMiddlewares = <T extends Koa>(app: T): T => {
 	app.use(bodyParser());
@@ -33,7 +33,7 @@ export const useMiddlewares = <T extends Koa>(app: T): T => {
 				`/v${process.env.SERVICE_VERSION}/api/forgot/request`,
 				`/v${process.env.SERVICE_VERSION}/api/rss`,
 				`/v${process.env.SERVICE_VERSION}/api/siteInfo`,
-				`/v${process.env.SERVICE_VERSION}/api/latestAppVersion`
+				`/v${process.env.SERVICE_VERSION}/api/latestAppVersion`,
 			],
 			method: "OPTIONS",
 		})
@@ -43,20 +43,22 @@ export const useMiddlewares = <T extends Koa>(app: T): T => {
 	const db = new Map();
 
 	// RateLimit middleware (100 request per minute)
-	app.use(ratelimit({
-		driver: 'memory',
-		db: db,
-		duration: 60000,
-		errorMessage: 'Rate limit exceeded',
-		id: (ctx) => ctx.ip,
-		headers: {
-			remaining: 'Rate-Limit-Remaining',
-			reset: 'Rate-Limit-Reset',
-			total: 'Rate-Limit-Total'
-		},
-		max: 100,
-		disableHeader: false,
-	}));
+	app.use(
+		ratelimit({
+			driver: "memory",
+			db: db,
+			duration: 60000,
+			errorMessage: "Rate limit exceeded",
+			id: (ctx) => ctx.ip,
+			headers: {
+				remaining: "Rate-Limit-Remaining",
+				reset: "Rate-Limit-Reset",
+				total: "Rate-Limit-Total",
+			},
+			max: 100,
+			disableHeader: false,
+		})
+	);
 
 	return app;
 };

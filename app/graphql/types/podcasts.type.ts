@@ -261,5 +261,5 @@ export class ModifyProfileInput {
 		description: "Snapod site theme name",
 		nullable: true,
 	})
-	snapod_site_theme: string
+	snapod_site_theme: string;
 }

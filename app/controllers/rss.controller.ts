@@ -29,8 +29,8 @@ export class RSSController {
 				author: {
 					select: {
 						name: true,
-						email: true
-					}
+						email: true,
+					},
 				},
 				episodes: {
 					include: {

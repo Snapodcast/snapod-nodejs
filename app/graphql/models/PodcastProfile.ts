@@ -151,5 +151,5 @@ export class PodcastProfile {
 	@Field((_type) => String, {
 		nullable: true,
 	})
-	snapod_site_theme: string
+	snapod_site_theme: string;
 }

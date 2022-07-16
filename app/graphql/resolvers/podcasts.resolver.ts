@@ -19,12 +19,12 @@ import {
 } from "../types/podcasts.type";
 import { VoidOutput, Preview } from "../types/global.type";
 import NetlifyAPI from "netlify";
-import Parser from 'rss-parser';
-import TurndownService from 'turndown'
+import Parser from "rss-parser";
+import TurndownService from "turndown";
 
 const turndownService = new TurndownService();
 const parser: Parser = new Parser();
-const client = new NetlifyAPI(process.env.NETLIFY_KEY)
+const client = new NetlifyAPI(process.env.NETLIFY_KEY);
 
 interface JWTContext extends Context {
 	state: {
@@ -214,38 +214,36 @@ export class PodcastsResolver {
 		// get current domain
 		const result = await prisma.podcastProfile.findUnique({
 			where: {
-				podcastCuid
+				podcastCuid,
 			},
 			select: {
-				snapod_site_custom_url: true
-			}
-		})
+				snapod_site_custom_url: true,
+			},
+		});
 		const currentDomain = result.snapod_site_custom_url;
 
 		// update database
 		await prisma.podcastProfile.update({
 			where: {
-				podcastCuid
+				podcastCuid,
 			},
 			data: {
-				snapod_site_custom_url: customDomain
-			}
-		})
+				snapod_site_custom_url: customDomain,
+			},
+		});
 
 		/* Netlify Operations */
 		// fetch snapod site
 		const snapodSite = await client.getSite({
-			site_id: "c4aa5329-e0a4-45e9-a979-84daec85ebb9"
-		})
+			site_id: "c4aa5329-e0a4-45e9-a979-84daec85ebb9",
+		});
 		const existingDomains = snapodSite.domain_aliases;
 
-		console.log(snapodSite);
-
-		if (customDomain && customDomain !== '') {
+		if (customDomain && customDomain !== "") {
 			// changing the domain
 			// validate domain
 			if (customDomain.indexOf(".") === -1) {
-				throw new BadRequestError("Invalid domain")
+				throw new BadRequestError("Invalid domain");
 			}
 
 			// proceeds if target domain does not exist
@@ -254,9 +252,9 @@ export class PodcastsResolver {
 				await client.updateSite({
 					site_id: "c4aa5329-e0a4-45e9-a979-84daec85ebb9",
 					body: {
-						domain_aliases: [...existingDomains, customDomain]
-					}
-				})
+						domain_aliases: [...existingDomains, customDomain],
+					},
+				});
 			}
 		} else {
 			// removing the domain
@@ -268,9 +266,9 @@ export class PodcastsResolver {
 				await client.updateSite({
 					site_id: "c4aa5329-e0a4-45e9-a979-84daec85ebb9",
 					body: {
-						domain_aliases: existingDomains
-					}
-				})
+						domain_aliases: existingDomains,
+					},
+				});
 			}
 		}
 
@@ -284,42 +282,46 @@ export class PodcastsResolver {
 		nullable: true,
 		description: "Preview a podcast from a RSS url",
 	})
-	async previewPodcast(@Arg("podcastRssUrl") podcastRssUrl: string): Promise<Preview> {
+	async previewPodcast(
+		@Arg("podcastRssUrl") podcastRssUrl: string
+	): Promise<Preview> {
 		const feed = await parser.parseURL(podcastRssUrl);
 		let episodes = [];
+
 		feed.items.map((item) => {
 			episodes[episodes.length] = {
 				episode: {
 					title: item.title,
-					content: item.content
+					content: item.content,
 				},
 				profile: {
 					audio_url: item.enclosure.url,
 					audio_size: item.enclosure.length,
 					cover_art_image_url: item.itunes?.image,
-					clean_content: item.itunes?.explicit !== 'no',
-					episode_number: parseInt(item.itunes?.episode)
-				}
-			}
-		})
+					clean_content: item.itunes?.explicit !== "no",
+					episode_number: parseInt(item.itunes?.episode),
+				},
+			};
+		});
+
 		return {
 			podcast: {
 				name: feed.title,
 				description: feed.description,
-				author: feed.author
+				author: feed.author,
 			},
 			profile: {
-				cover_art_image_url: feed.image.url,
+				cover_art_image_url: feed.itunes?.image,
 				category_name: feed.itunes?.categories[0],
 				language: feed.language,
-				clean_content: feed.itunes?.explicit !== 'no',
+				clean_content: feed.itunes?.explicit !== "no",
 				website_url: feed.link,
 				copyright: feed.copyright,
 				ownerEmail: feed.itunes?.owner?.email,
-				ownerName: feed.itunes?.owner?.name
+				ownerName: feed.itunes?.owner?.name,
 			},
-			episodes: episodes
-		}
+			episodes: episodes,
+		};
 	}
 
 	@Mutation((_returns) => Podcast, {
@@ -347,14 +349,14 @@ export class PodcastsResolver {
 					type: "episodic",
 					profile: {
 						create: {
-							cover_art_image_url: feed.image.url,
+							cover_art_image_url: feed.itunes?.image,
 							category_name: feed.itunes?.categories[0],
 							language: feed.language,
-							clean_content: feed.itunes?.explicit !== 'no',
+							clean_content: feed.itunes?.explicit !== "no",
 							website_url: feed.link,
 							copyright: feed.copyright,
 							ownerEmail: feed.itunes?.owner?.email,
-							ownerName: feed.itunes?.owner?.name
+							ownerName: feed.itunes?.owner?.name,
 						},
 					},
 				},
@@ -364,32 +366,37 @@ export class PodcastsResolver {
 			});
 
 		// import episodes
-		await Promise.all(feed.items.map(async (item) => {
-			await prisma.episode
-				.create({
-					data: {
-						title: item.title,
-						content: turndownService.turndown(item.content),
-						published: true,
-						podcastCuid: podcastCuid,
-						cuid: cuid(),
-						profile: {
-							create: {
-								audio_url: item.enclosure.url,
-								audio_size: typeof item.enclosure.length === "string" ? parseInt(item.enclosure.length) : item.enclosure.length,
-								cover_art_image_url: item.itunes?.image,
-								clean_content: item.itunes?.explicit !== 'no',
-								episode_number: parseInt(item.itunes?.episode),
-								episode_type: "full",
+		await Promise.all(
+			feed.items.map(async (item) => {
+				await prisma.episode
+					.create({
+						data: {
+							title: item.title,
+							content: turndownService.turndown(item.content),
+							published: true,
+							podcastCuid: podcastCuid,
+							cuid: cuid(),
+							profile: {
+								create: {
+									audio_url: item.enclosure.url,
+									audio_size:
+										typeof item.enclosure.length === "string"
+											? parseInt(item.enclosure.length)
+											: item.enclosure.length,
+									cover_art_image_url: item.itunes?.image,
+									clean_content: item.itunes?.explicit !== "no",
+									episode_number: parseInt(item.itunes?.episode),
+									episode_type: "full",
+								},
 							},
 						},
-					},
-				})
-				.catch((e) => {
-					console.log(e);
-					throw new BadRequestError("Error importing an episode");
-				});
-		}))
+					})
+					.catch((e) => {
+						console.log(e);
+						throw new BadRequestError("Error importing an episode");
+					});
+			})
+		);
 
 		return importedPodcast;
 	}

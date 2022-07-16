@@ -5,10 +5,7 @@ import { Service } from "typedi";
 @Service()
 export class CorsMiddleware implements KoaMiddlewareInterface {
 	async use(context: any, next: (err?: any) => any): Promise<any> {
-		context.set(
-			"Access-Control-Allow-Methods",
-			"GET,POST"
-		);
+		context.set("Access-Control-Allow-Methods", "GET,POST");
 		context.set(
 			"Access-Control-Allow-Origin",
 			context.request.header.origin || context.request.origin

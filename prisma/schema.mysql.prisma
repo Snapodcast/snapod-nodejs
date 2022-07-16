@@ -1,10 +1,10 @@
-generator client {
-  provider = "prisma-client-js"
+datasource db {
+  provider = "mysql"
+  url      = env("MYSQL_DATABASE_URL")
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("POSTGRESQL_DATABASE_URL")
+generator client {
+  provider = "prisma-client-js"
 }
 
 model Podcast {
@@ -12,12 +12,12 @@ model Podcast {
   cuid        String          @unique @default(cuid())
   createdAt   DateTime        @default(now())
   name        String          @db.VarChar(255)
-  description String
+  description String          @db.Text
   type        String          @db.VarChar(8)
-  authorCuid  String
-  author      User            @relation(fields: [authorCuid], references: [cuid])
-  episodes    Episode[]
   profile     PodcastProfile?
+  episodes    Episode[]
+  author      User            @relation(fields: [authorCuid], references: [cuid])
+  authorCuid  String
 }
 
 model PodcastProfile {
@@ -49,8 +49,8 @@ model PodcastProfile {
   snapod_site_url        String?  @unique
   snapod_site_custom_url String?  @unique
   snapod_site_theme      String?  @default("default")
-  podcastCuid            String?  @unique
   podcast                Podcast? @relation(fields: [podcastCuid], references: [cuid])
+  podcastCuid            String?  @unique
 }
 
 model EpisodeProfile {
@@ -63,8 +63,8 @@ model EpisodeProfile {
   clean_content       Boolean
   season_number       Int?
   episode_number      Int?
-  episodeCuid         String?  @unique
   episode             Episode? @relation(fields: [episodeCuid], references: [cuid])
+  episodeCuid         String?  @unique
 }
 
 model Episode {
@@ -72,11 +72,11 @@ model Episode {
   cuid        String          @unique @default(cuid())
   createdAt   DateTime        @default(now())
   title       String          @db.VarChar(255)
-  content     String?
+  content     String?         @db.LongText
   published   Boolean         @default(false)
-  podcastCuid String
-  podcast     Podcast         @relation(fields: [podcastCuid], references: [cuid])
   profile     EpisodeProfile?
+  podcast     Podcast         @relation(fields: [podcastCuid], references: [cuid])
+  podcastCuid String
 }
 
 model User {
