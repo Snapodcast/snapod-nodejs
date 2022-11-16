@@ -12,6 +12,7 @@ export async function useGraphQL(
 		schema: await buildSchema({
 			resolvers: [path.resolve(__dirname + "/../app/graphql/resolvers/*")],
 		}),
+		cache: "bounded",
 		introspection: true,
 		context: ({ ctx }) => ctx,
 	});
